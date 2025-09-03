@@ -1,0 +1,1 @@
+<span class="txtorange14">Showing Records:</span> <span class="txtblack14"><?= $this->start+1?> to <?=min($this->total_records, $this->start+$this->records_per_page)?> of <?= $this->total_records?></span>

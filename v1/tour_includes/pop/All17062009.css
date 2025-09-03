@@ -1,0 +1,13 @@
+﻿/* START tinyaccordion */
+#acc {width:457px; list-style:none; margin: 0px; padding: 0px}
+#acc h3 {font-size: 11px; color: #474747; width:443px; padding: 0px; padding:6px 6px 6px; font-weight:bold; margin: 0px; margin-top:5px; cursor:pointer}
+#acc h3:hover {text-decoration: underline}
+#acc .acc-section {overflow:hidden; background:#fff; padding: 0px}
+#acc .acc-content {width:425px; padding:15px; background:#fff; border: solid 1px #FED0DA;}
+/* END tinyaccordion */
+
+/* START tinybox */
+#tinybox {position:absolute; display:none; padding:10px; background:#fff url(ajax-loader.gif) no-repeat 50% 50%; border:10px solid #abadac; z-index:2000}
+#tinymask {position:absolute; display:none; top:0; left:0; height:100%; width:100%; background:#000; z-index:1500}
+#tinycontent {background:#fff}
+/* END tinybox */

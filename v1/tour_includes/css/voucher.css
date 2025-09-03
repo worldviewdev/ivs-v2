@@ -1,0 +1,171 @@
+body {
+	padding:0;
+	margin:10px 0;
+	background-color:#F3F2F2;
+	font-size:13px;
+	color:#565656;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+.headertop_text {
+	color:#a5a5a5;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size:10px;/*
+	padding:0 10px ;*/
+}
+.header_padding {
+	padding:15px 10px;
+}
+.redtxt_17 {
+	color:#cf3610;
+	font-size:17px;
+}
+.red_link:link {
+	color:#cf3610;
+	text-decoration:none;
+	outline:none;
+	font-size:12px;
+}
+.red_link:visited {
+	color:#cf3610;
+	text-decoration:none;
+	outline:none;
+	font-size:12px;
+}
+.red_link:hover {
+	color:#000000;
+	text-decoration:none;
+	outline:none;
+	font-size:12px;
+}
+
+.middle_main {
+	padding:10px 10px;
+}
+
+.black_18 {
+	font-size:18px;
+	color:#000000;
+}
+.text_16 {
+	font-size:16px;
+}
+
+a {
+	text-decoration:none;
+	outline:none;
+	color:#cf3610;
+}
+a:visited {
+	text-decoration:none;
+	outline:none;
+	color:#cf3610;
+}
+a:hover {
+	text-decoration:none;
+	outline:none;
+	color:#565656;
+}
+.txt_16 {
+	font-size:16px;
+}
+.redtxt {
+	color:#cf3610;
+}
+.vertical_line {
+	background:url(../images/line.gif) top center repeat-y;
+}
+.horizontal_line {
+	background:url(../images/line.gif) left center repeat-x;
+}
+.red_link13:link {
+	text-decoration:none;
+	outline:none;
+	color:#cf3610;
+}
+.red_link13:visited {
+	text-decoration:none;
+	outline:none;
+	color:#cf3610;
+}
+.red_link13:hover {
+	text-decoration:none;
+	outline:none;
+	color:#565656;
+}
+
+
+.dark_gray_bg{
+	background-color:#565656;
+	padding:10px 5px 10px 10px;
+	color:#FFF;
+	font-size:13px;
+	border-top:#FFF 1px solid;
+}
+
+.brown_bg{
+	background-color:#ab8154;
+	padding:4px 0 4px 9px;
+	color:#FFF;
+	font-size:13px;
+	text-transform:uppercase;
+}
+.textfield {
+	color:#616161;
+	font-size:12px;
+	border:1px #956f46;
+	padding-left:5px;
+	height:20px;
+}
+.textfield2{
+	color:#616161;
+	font-size:12px;
+	border:1px #956f46;
+	height:20px;
+}
+.red_bg{
+	background-color:#cf3610;
+	padding:4px 0 4px 9px;
+	color:#FFF;
+	font-size:13px;
+}
+.dark_gray_bg_h{
+	background-color:#565656;
+	padding:4px 0 4px 9px;
+	color:#FFF;
+	font-size:13px;
+}
+.light_gray_bg{
+	background-color:#e7e7e7;
+	color:#333;
+	font-size:13px;
+	border-top:#FFF 1px solid;
+}
+.light_gray_bg2{
+	background-color:#f3f2f2;
+	color:#333;
+	font-size:13px;
+	border-top:#FFF 1px solid;
+}
+#wait_page_img_id {position:absolute; top:50%; left:50%; margin:-200px 0 0 -285px;}
+div.external_calendar_div{border : 2px solid #9b9b9b !important; background-color:white !important;}
+table.calendar_table td{border: 0.1em solid #cccccc;color : black;}
+table.calendar_table td.month, table.calendar_table td.close_calendar_div{background-color :#cccccc; color:#555555;}   
+table.calendar_table td.button{color : white;	background-color : #cccccc;}
+table.calendar_table td.past_day_cal{color : #a9a9a9;}
+table.calendar_table td.future_day_cal:hover{background-color : #333333; color:white;}
+table.calendar_table td.future_day_cal_hover{background-color : #333333; color:white;}
+table.calendar_table td.today_day_cal_href:hover{background-color : #333333;}
+table.calendar_table td.today_day_cal_href_hover{background-color : #333333;}
+table.calendar_table td.selected_day_cal_no_href,table.calendar_table td.selected_day_cal{color : white;background-color :#444444;}
+table.calendar_table td.selected_day_cal:hover,table.calendar_table td.selected_period_cal:hover{color:white; background-color : #555555;}
+table.calendar_table td.selected_day_cal_hover,table.calendar_table td.selected_period_cal_hover{color:white; background-color : #888888;}
+table.calendar_table td.selected_period_cal{color : white; background-color : #888888;}
+table.calendar_table td.day_name{color : white;	background-color : #888888;}
+table.calendar_form_table,table.calendar_form_table_otherwise{border-bottom: 1px dashed #cccccc;}
+
+
+.blue_text_18 {
+	color:#0764c1;
+	font-size:18px;
+	font-weight:bold;
+}

@@ -1,0 +1,18 @@
+Dear {client_first_name}
+
+Here is a link to your Personal TripPlanner for your trip.  It is a new way for us to deliver up-to-date information about the services we are providing to you - and also a way for you to keep track of any other information about the trip you may want to add.
+
+{tripplanner_link}
+
+To see a list of the services we are providing click on the Services tab.  The other tabs contain specific information about specific services like accommodations, tours, transfers etc.  The black tabs will contain financial information concerning the trip.  You will see on the “home” page that there is a way for you to send just the itinerary to your family members and friends.
+
+Once all preparations for your trip have been completed, you will find the TripPlanner to be a very convenient way to access all the relevant information, and because it is online, you will be able to access it from any Internet connected computer during your trip and once you arrive back home.
+
+I hope you like the TripPlanner as much as we do.  Please let me know if you have any questions.
+
+Thank you.
+
+Best wishes
+{agent_first_name}
+{agent_email}
+{agent_telephone_number}

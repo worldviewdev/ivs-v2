@@ -1,0 +1,6 @@
+# Ignore tools folder
+tools/
+
+# Ignore demo60 file/folder
+v1/demo60
+assets/media

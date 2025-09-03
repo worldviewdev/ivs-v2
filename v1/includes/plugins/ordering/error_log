@@ -1,0 +1,2 @@
+[24-Jul-2015 14:48:32 Canada/Pacific] PHP Warning:  mysql_connect(): Access denied for user 'eweight'@'localhost' (using password: NO) in /home4/brazilgr/public_html/italyvacationspecialists.com/includes/funcs_lib.inc.php on line 27
+[01-Aug-2015 11:19:12 Canada/Pacific] PHP Warning:  mysql_connect(): Access denied for user 'eweight'@'localhost' (using password: NO) in /home4/brazilgr/public_html/italyvacationspecialists.com/includes/funcs_lib.inc.php on line 27
