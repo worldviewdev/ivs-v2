@@ -1,5 +1,5 @@
 <?php
-require_once('includes/midas.inc.php');
+include_once('includes/midas.inc.php');
 ?>
 <html lang="en">
 <head>
@@ -7,12 +7,12 @@ require_once('includes/midas.inc.php');
     <title><?php echo SITE_NAME; ?>:: Control Panel</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+    <link rel="shortcut icon" href="<?php echo SITE_WS_PATH; ?>/assets/media/logos/favicon.ico" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
-    <script src="assets/js/custom.js"></script>
+    <link href="<?php echo SITE_WS_PATH; ?>/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo SITE_WS_PATH; ?>/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo SITE_WS_PATH; ?>/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <script src="<?php echo SITE_WS_PATH; ?>/assets/js/custom.js"></script>
     <script>
         // Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }
         

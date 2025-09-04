@@ -4,12 +4,14 @@ RewriteEngine On
 RewriteRule ^index\.(php|html|htm)$ - [F,L]
 RewriteRule ^v1/index\.(php|html|htm)$ - [F,L]
 
-# Redirect root directory to v1
+# Redirect root directory to v1 unless it's a call to an asset
 RewriteCond %{REQUEST_URI} ^/$
+RewriteCond %{REQUEST_URI} !\.(?:css|js)$
 RewriteRule ^(.*)$ /v1/ [L,R=301]
 
-# Redirect any request that doesn't start with v1/ to v1/
+# Redirect any request that doesn't start with v1/ to v1/ unless it's a call to an asset
 RewriteCond %{REQUEST_URI} !^/v1/
+RewriteCond %{REQUEST_URI} !\.(?:css|js)$
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /v1/$1 [L,R=301]

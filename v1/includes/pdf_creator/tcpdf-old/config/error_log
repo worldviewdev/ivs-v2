@@ -1,0 +1,2 @@
+[20-Jul-2016 11:27:24 UTC] PHP Parse error:  syntax error, unexpected $end, expecting T_VARIABLE or T_ENCAPSED_AND_WHITESPACE or T_DOLLAR_OPEN_CURLY_BRACES or T_CURLY_OPEN in /home/brazilgr/public_html/italyvacationspecialists.com/pdf_creator/tcpdf/config/tcpdf.php on line 1616
+[29-Aug-2022 22:31:42 Canada/Pacific] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 259215360 bytes) in /home/brazilgr/public_html/italyvacationspecialists.com/pdf_creator/tcpdf/config/tcpdf.php on line 1412

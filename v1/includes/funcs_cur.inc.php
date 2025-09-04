@@ -1,13 +1,8 @@
 <?php
-require_once 'brevo/vendor/autoload.php';
 require_once 'phpmailer/vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-// Brevo API
-use Brevo\Client\Configuration;
-use Brevo\Client\Api\TransactionalEmailsApi;
-use Brevo\Client\Model\SendSmtpEmail;
-use GuzzleHttp\Client;
+
 function safe_number_format($number, $decimals = 0, $decimal_separator = '.', $thousands_separator = ',')
 {
 	if ($number === null) {
@@ -386,76 +381,7 @@ function send_template_mail($subject, $message, $to_email, $from_email, $from_na
 	db_query("insert into tbl_email_log set to_mail='" . addslashes($to_email) . "',from_email='" . addslashes($from_email) . "',from_name='" . addslashes($from_name) . "',subject='" . addslashes($subject) . "',message='" . addslashes($message) . "',send_date=now(),send_status='$send_status',page_url='" . $page_url . "'");
 	return $return;
 }
-function send_brevo_transactional_email(
-	string $from_email,
-	string $from_name,
-	string $to_email,
-	string $to_name,
-	string $subject,
-	string $htmlContent,
-	string $reply_to_email = '',
-	string $reply_to_name = '',
-	array $params = []
-) {
-	try {
-		// Konfigurasi API Key Brevo
-		$config = Configuration::getDefaultConfiguration()
-			->setApiKey('api-key', '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'); // Ganti API Key disini
-		$apiInstance = new TransactionalEmailsApi(new Client(), $config);
-		// Siapkan data email
-		$sendSmtpEmail = new SendSmtpEmail([
-			'subject' => $subject,
-			'sender' => ['name' => $from_name, 'email' => $from_email],
-			'to' => [['name' => $to_name, 'email' => $to_email]],
-			'htmlContent' => $htmlContent,
-			'params' => $params
-		]);
-		if (!empty($reply_to_email)) {
-			$sendSmtpEmail->setReplyTo([
-				'name' => $reply_to_name ?: $from_name,
-				'email' => $reply_to_email
-			]);
-		}
-		// Kirim email
-		$result = $apiInstance->sendTransacEmail($sendSmtpEmail);
-		return $result; // bisa print_r untuk debug
-	} catch (Exception $e) {
-		return '❌ Exception: ' . $e->getMessage();
-	}
-}
-function sendEmailViaBrevo(
-	string $fromName,
-	string $fromEmail,
-	string $toName,
-	string $toEmail,
-	string $subject,
-	string $bodyMessage
-): void {
-	// Setup API key
-	$config = Brevo\Client\Configuration::getDefaultConfiguration()
-		->setApiKey('api-key', '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');
-	// Instance Email API
-	$apiInstance = new Brevo\Client\Api\TransactionalEmailsApi(
-		new GuzzleHttp\Client(),
-		$config
-	);
-	// Setup Email Content
-	$sendSmtpEmail = new \Brevo\Client\Model\SendSmtpEmail([
-		'subject' => $subject,
-		'sender' => ['name' => $fromName, 'email' => $fromEmail],
-		'replyTo' => ['name' => $fromName, 'email' => $fromEmail],
-		'to' => [['name' => $toName, 'email' => $toEmail]],
-		'htmlContent' => '<html><body><h1>This is a IVSBug Report System: {{params.bodyMessage}}</h1></body></html>',
-		'params' => ['bodyMessage' => $bodyMessage]
-	]);
-	// Send Email
-	try {
-		$result = $apiInstance->sendTransacEmail($sendSmtpEmail);
-		print_r($result);
-	} catch (Exception $e) {
-		echo 'Error sending email: ', $e->getMessage(), PHP_EOL;
-	}
-}
+
 function send_newsletter_mail($subject, $message, $to_email, $from_email, $from_name, $html = true, $nltobr = false, $header = "D")
 {
 	$mail_message = "";
@@ -561,6 +487,7 @@ function pages_drop_down($name, $sel_value, $skip, $extra = '', $choose_one = ''
 	$result = db_query($sql);
 	if (mysqli_num_rows($result)) {
 		if ($level == 1) {
+			$str_dropdown = '';
 			$str_dropdown .= "<select name='$name' class='show_page' id='$name' $extra >";
 			if ($choose_one != '') {
 				$str_dropdown .= "<option value=\"\">$choose_one</option>";
@@ -597,6 +524,7 @@ function set_page_display_order_all($page_parent_id = 0, $level = 0)
 {
 	$level++;
 	$i = 1;
+	$str = '';
 	$sql = "select *  from tbl_static_pages where page_parent_id='$page_parent_id' order by page_display_order ";
 	$result = db_query($sql);
 	if (mysqli_num_rows($result)) {
@@ -1481,12 +1409,11 @@ function country_operation($arr_counter, $arr = array())
 function create_financial_pdf($id)
 {
 	global $arr_tour_classification;
-	require_once(SITE_FS_PATH . '/pdf_creator/tcpdf/config/lang/eng.php');
-	require_once(SITE_FS_PATH . '/pdf_creator/tcpdf/tcpdf.php');
+	require_once(SITE_FS_PATH . '/includes/pdf_creator/tcpdf/config/lang/eng.php');
+	require_once(SITE_FS_PATH . '/includes/pdf_creator/tcpdf/tcpdf.php');
 	$result = db_result("select f.*,ag.*,concat(a.agent_first_name,' ',a.agent_last_name) as agent_name,concat(c.client_first_name,' ',c.client_last_name) as client_name,concat(e.emp_first_name,' ',e.emp_last_name) as consultant_name from mv_files f left join mv_agent a on f.fk_agent_id=a.agent_id left join mv_agency ag on a.fk_agency_id=ag.agency_id left join mv_client c on f.fk_client_id=c.client_id left join mv_employee e on f.file_primary_staff=e.emp_id where file_id = '$id'");
 	class MYPDF extends TCPDF
 	{
-		//Page header
 		public function Header()
 		{
 			//$this->Cell(790, 1, '', 0, 1, 'C', 0, '', 1);
@@ -4625,7 +4552,7 @@ function create_file($post_vars)
 			$booking_price_currency = "EUR";
 			$sql = "insert into mv_file_activity set fk_file_id = '" . $file_id . "' ,fk_tour_id = '" . $tour_res['tour_id'] . "',booked_with_supplier_id = '$booking_with_supplier' ,booked_with_supplier_name = '" . addslashes($booking_with) . "' ,pax_no = '" . $tour_res['guest'] . "' ,check_in_date = '" . $tour_res['tour_date'] . "' ,booking_net_price = '" . $tour_res['tour_net_price'] . "',booking_net_price_sc='" . $tour_res['tour_net_price'] . "' ,file_activity_added_by = '1',file_activity_added_on = now(),booking_price_currency='$booking_price_currency',service_status='1',booking_original_net_price='" . $tour_res['tour_net_price'] . "',booking_gross_price='" . $tour_res['tour_gross_price'] . "',check_in_time='" . $tour_res['tour_time'] . "',tour_pricing_method='" . $tour_pricing_method . "',service_paid_by=1,is_private_tour='$is_private_tour',gross_price_edited='Yes',is_paid='Yes',voucher_sent='Yes'";
 			db_query($sql);
-			$file_activity_id = mysqli_insert_id();
+			$file_activity_id = mysqli_insert_id($GLOBALS['dbcon']);
 			#############################  Activity Log ###########
 			$log_title = "New Activity (" . $tour_res['tour_name'] . ") has been added in file (" . $file_code . ")";
 			db_query("insert into mv_daily_log set employee_id='1',log_title='" . addslashes($log_title) . "',log_action='Insert',log_added_date=now(),log_mysql_query='" . addslashes($sql) . "',log_url='http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "',log_user_agent='" . $_SERVER['HTTP_USER_AGENT'] . "',log_previous_arr='" . addslashes($log_previous_arr) . "',log_updated_arr='" . addslashes($log_updated_arr) . "'");
@@ -4640,7 +4567,7 @@ function create_file($post_vars)
 			$sql = "insert into mv_file_transfers set fk_file_id = '$file_id' ,file_booking_type = '217' ,transfer_country = '36' ,fk_region_id = '" . $transfer_res['region_id'] . "' ,booked_with_supplier_id = '594' ,booked_with_supplier_name = '" . addslashes($booking_with_res['supplier_company_name']) . "' ,fk_pickup_id = '" . $transfer_res['pickup_id'] . "' ,fk_dropoff_id = '" . $transfer_res['dropoff_id'] . "' ,check_in_date = '" . $transfer_res['pickup_date'] . "' ,booking_net_price = '" . $transfer_res['transfer_net_price'] . "'  ,booking_net_price_sc='" . $transfer_res['transfer_net_price'] . "',file_transfer_added_by = '1',file_transfer_added_on = now(),booking_method='1',vehicle_id='" . $transfer_res['vehicle_id'] . "',no_pax='" . $transfer_res['no_pax'] . "',booking_price_currency='EUR',check_in_time='" . $transfer_res['pickup_time'] . "',booking_original_net_price='" . $transfer_res['transfer_net_price'] . "',booking_gross_price='" . $transfer_res['transfer_gross_price'] . "',disp_transfer_description_auto='Yes',pickup_depot='" . addslashes($transfer_res['pickup_location']) . "',dropoff_depot='" . addslashes($transfer_res['dropoff_location']) . "',display_all_clients='Yes',display_lead_pax='Yes',service_status='1',gross_price_edited='Yes',is_paid='Yes',voucher_sent='Yes'";
 			db_query($sql);
 			###############################  For Logging ################
-			if (mysqli_affected_rows()) {
+			if (mysqli_affected_rows($GLOBALS['dbcon'])) {
 				$log_title = "New Transfer has been added in file (" . $file_code . ")";
 				db_query("insert into mv_daily_log set employee_id='1',log_title='" . addslashes($log_title) . "',log_action='Insert',log_added_date=now(),log_mysql_query='" . addslashes($sql) . "',log_url='http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "',log_user_agent='" . $_SERVER['HTTP_USER_AGENT'] . "',log_previous_arr='" . addslashes($log_previous_arr) . "',log_updated_arr='" . addslashes($log_updated_arr) . "'");
 				$log_description = "Added Transfer to Services";
@@ -4849,6 +4776,7 @@ function get_cat_tour($lid, $cat, $count)
 }
 function pdf_invoice_date($date)
 {
+	$s = '';
 	if (strlen($date) >= 10) {
 		if ($date == '0000-00-00 00:00:00' || $date == '0000-00-00') {
 			return '';
@@ -4956,6 +4884,7 @@ function Paypal_PPHttpPost($methodName_, $nvpStr_)
 	$API_Password = urlencode('XA645N54XR2SK5Q6');
 	$API_Signature = urlencode('Akc-lAA1-O9PdXCuWSu2mZ8cjuvvA7iAaqw5rUBA-OOkAOmFALoSGHfl');
 	$API_Endpoint = "https://api-3t.paypal.com/nvp";
+	$environment = "sandbox";
 	if ("sandbox" === $environment || "beta-sandbox" === $environment) {
 		$API_Endpoint = "https://api-3t.$environment.paypal.com/nvp";
 	}
@@ -5081,7 +5010,7 @@ function copy_supplier($id, $supplier_company_name, $suplier_slug, $supplier_bus
 {
 	//echo $supplier_business_type.'==='.$supplier_code;
 	db_query("INSERT INTO mv_supplier (supplier_hotel_type, supplier_accommodation_type, property_type, supplier_code, supplier_username, supplier_password, supplier_company_name, slug, supplier_rating, supplier_address, supplier_city, supplier_state, supplier_district, supplier_zipcode, supplier_country, supplier_phone_country_code, supplier_phone_area_code, supplier_phone, supplier_fax_country_code, supplier_fax_area_code, supplier_fax, supplier_contact_name, supplier_contact_number_country_code, supplier_contact_number_area_code, supplier_contact_number, supplier_contact_email, supplier_email, supplier_secondary_email, supplier_reservation_contact, supplier_reservation_email, supplier_emergency_number_secondary_area_code, supplier_emergency_number_secondary_country_code, supplier_emergency_number_secondary, supplier_emergency_number_country_code, supplier_emergency_number_area_code, supplier_emergency_number, supplier_website, supplier_mv_url, supplier_booking_engine, supplier_map_link, supplier_bank_information, supplier_comments, supplier_short_description, supplier_description, supplier_directions, supplier_min_no_nights, supplier_currency, supplier_credit_cards, supplier_closed_from, supplier_closed_to, supplier_contract_file, supplier_attachment_file, supplier_images, supplier_business_type, location_tag_ids, location_tags_name, check_in_time, check_out_time, supplier_status, supplier_added_date, supplier_added_by, service_currency_same_for_all, supplier_accommodation_currency, supplier_transfer_currency, supplier_ferry_currency, supplier_train_currency, supplier_flight_currency, supplier_activity_currency, supplier_misc_currency, map_latitude, map_longitude, map_view, hotel_amenities, hotel_published, supplier_map_image, map_type, supplier_data_completed, show_in_frontend, supplier_meta_title, supplier_meta_description, supplier_meta_keywords) (select supplier_hotel_type, supplier_accommodation_type, property_type, supplier_code, supplier_username, supplier_password, '$supplier_company_name', '$suplier_slug', supplier_rating, supplier_address, supplier_city, supplier_state, supplier_district, supplier_zipcode, supplier_country, supplier_phone_country_code, supplier_phone_area_code, supplier_phone, supplier_fax_country_code, supplier_fax_area_code, supplier_fax, supplier_contact_name, supplier_contact_number_country_code, supplier_contact_number_area_code, supplier_contact_number, supplier_contact_email, supplier_email, supplier_secondary_email, supplier_reservation_contact, supplier_reservation_email, supplier_emergency_number_secondary_area_code, supplier_emergency_number_secondary_country_code, supplier_emergency_number_secondary, supplier_emergency_number_country_code, supplier_emergency_number_area_code, supplier_emergency_number, supplier_website, supplier_mv_url, supplier_booking_engine, supplier_map_link, supplier_bank_information, supplier_comments, supplier_short_description, supplier_description, supplier_directions, supplier_min_no_nights, supplier_currency, supplier_credit_cards, supplier_closed_from, supplier_closed_to, supplier_contract_file, supplier_attachment_file, supplier_images, supplier_business_type, location_tag_ids, location_tags_name, check_in_time, check_out_time, supplier_status, now(), '" . $_SESSION['sess_agent_id'] . "', service_currency_same_for_all, supplier_accommodation_currency, supplier_transfer_currency, supplier_ferry_currency, supplier_train_currency, supplier_flight_currency, supplier_activity_currency, supplier_misc_currency, map_latitude, map_longitude, map_view, hotel_amenities, '" . $hotel_published . "', supplier_map_image, map_type, supplier_data_completed, show_in_frontend, supplier_meta_title, supplier_meta_description, supplier_meta_keywords from mv_supplier where supplier_id='$id')");
-	$supplier_id = mysqli_insert_id();
+	$supplier_id = mysqli_insert_id($GLOBALS['dbcon']);
 	if (isbtype($supplier_business_type, 1) && $supplier_id > 0) {
 		$bk_sql = "insert into mv_hotel_engines set engine_name='594',fk_supplier_id='$supplier_id',
 					engine_added_by='" . $_SESSION['sess_agent_id'] . "',engine_added_on=now()";
@@ -5089,7 +5018,7 @@ function copy_supplier($id, $supplier_company_name, $suplier_slug, $supplier_bus
 		db_query("insert into mv_room_detail set room_detail_hotel_id='$supplier_id',
 					room_detail_name = 'Classic', room_detail_meal_plan = '160'
 					 ,room_detail_description = '',room_pricing_from=''");
-		$room_detail_id = mysqli_insert_id();
+		$room_detail_id = mysqli_insert_id($GLOBALS['dbcon']);
 		$sql = "insert into mv_hotel_rooms SET fk_supplier_id = '$supplier_id',room_name='Classic',room_occupancy_type = 'Single',room_added_by = '" . $_SESSION['sess_agent_id'] . "' ,room_added_on = now(),fk_room_detail_id='$room_detail_id'";  //,available_online='$available_online'
 		db_query($sql);
 		$sql = "insert into mv_hotel_rooms SET fk_supplier_id = '$supplier_id',room_name='Classic',room_occupancy_type = 'Double',room_added_by = '" . $_SESSION['sess_agent_id'] . "' ,room_added_on = now(),fk_room_detail_id='$room_detail_id'";  //,available_online='$available_online'
@@ -5535,7 +5464,7 @@ function export_tour($tour_id)
 			. "map_view='$map_view' ";
 		//echo $sql; exit;
 		db_query($sql, $db2);
-		$new_supplier_id = mysqli_insert_id();
+		$new_supplier_id = mysqli_insert_id($GLOBALS['dbcon']);
 		$supplier_code_arr = explode('-', $supplier_code);
 		$supplier_code = $supplier_code_arr[0] . "-" . $supplier_code_arr[1] . "-" . str_pad($new_supplier_id, 5, 0, STR_PAD_LEFT);
 		db_query("UPDATE mv_supplier SET supplier_code ='$supplier_code' WHERE supplier_id ='$new_supplier_id'", $db2);
@@ -5625,7 +5554,7 @@ function export_tour($tour_id)
 		. "tour_price_type='$tour_price_type'";
 	//echo $sql2; exit;
 	db_query($sql2, $db2);
-	$new_tour_id = mysqli_insert_id();
+	$new_tour_id = mysqli_insert_id($GLOBALS['dbcon']);
 	$tour_code = "TUR-" . str_pad($new_tour_id, 5, 0, STR_PAD_LEFT);
 	db_query("UPDATE mv_tours SET tour_code ='$tour_code' WHERE tour_id ='$new_tour_id'", $db2);
 	db_query("UPDATE mv_tours SET import_to_vv ='$new_tour_id' WHERE tour_id ='$tour_id'", $db1);
