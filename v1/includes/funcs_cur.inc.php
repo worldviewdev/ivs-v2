@@ -206,53 +206,53 @@ function send_mail2($from_name, $from_emailid, $to_emailid, $subject, $msg, $att
 	$return = $mail->Send();
 	return $return;
 }
-function send_mail3($from_name, $from_emailid, $to_emailid, $subject, $msg, $cc = '', $bcc = '', $attachment = '')
-{
-	// $mail = new PHPMailer();
-	// $mail->IsSMTP();
-	// $mail->SMTPDebug = 0;
-	// $mail->SMTPAuth = true;
-	// $mail->SMTPSecure = 'tls';
-	// //	$mail->Host = "mail.italyvacationspecialists.com";
-	// //	$mail->Port = 25;
-	// //	$mail->Username = "email_authorization@italyvacationspecialists.com";
-	// //	$mail->Password = "Glowb@l23433";
-	// $mail->Host = "smtp.gmail.com";
-	// $mail->Port = 587;
-	// $mail->Username = "info@italyvacationspecialists.com";
-	// $mail->Password = "htzl oftv orjf pxwv";
-	$mail = new PHPMailer();
-	$mail->IsSMTP();
-	$mail->SMTPDebug = 0;
-	$mail->SMTPAuth = true;
-	$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-	$mail->Host = "smtp.gmail.com";
-	$mail->Port = 587;
-	$mail->Username = "info@italyvacationspecialists.com";
-	$mail->Password = "htzl oftv orjf pxwv";
-	$mail->From = $from_emailid;
-	$mail->FromName = $from_name;
-	$mail->AddAddress($to_emailid);
-	$mail->AddReplyTo($mail->From, $mail->FromName);
-	if (!empty($cc)) {
-		foreach ($cc as $email => $name) {
-			$mail->AddCC($email, $name);
-		}
-	}
-	if (!empty($bcc)) {
-		foreach ($bcc as $email => $name) {
-			$mail->AddBCC($email, $name);
-		}
-	}
-	if ($attachment != '') {
-		$mail->AddAttachment($attachment);
-	}
-	$mail->Subject = $subject;
-	$mail->isHTML(true);
-	$body = $msg;
-	$mail->MsgHTML($body);
-	$return = $mail->Send();
-}
+// function send_mail3($from_name, $from_emailid, $to_emailid, $subject, $msg, $cc = '', $bcc = '', $attachment = '')
+// {
+// 	// $mail = new PHPMailer();
+// 	// $mail->IsSMTP();
+// 	// $mail->SMTPDebug = 0;
+// 	// $mail->SMTPAuth = true;
+// 	// $mail->SMTPSecure = 'tls';
+// 	// //	$mail->Host = "mail.italyvacationspecialists.com";
+// 	// //	$mail->Port = 25;
+// 	// //	$mail->Username = "email_authorization@italyvacationspecialists.com";
+// 	// //	$mail->Password = "Glowb@l23433";
+// 	// $mail->Host = "smtp.gmail.com";
+// 	// $mail->Port = 587;
+// 	// $mail->Username = "info@italyvacationspecialists.com";
+// 	// $mail->Password = "htzl oftv orjf pxwv";
+// 	$mail = new PHPMailer();
+// 	$mail->IsSMTP();
+// 	$mail->SMTPDebug = 0;
+// 	$mail->SMTPAuth = true;
+// 	$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+// 	$mail->Host = "smtp.gmail.com";
+// 	$mail->Port = 587;
+// 	$mail->Username = "info@italyvacationspecialists.com";
+// 	$mail->Password = "htzl oftv orjf pxwv";
+// 	$mail->From = $from_emailid;
+// 	$mail->FromName = $from_name;
+// 	$mail->AddAddress($to_emailid);
+// 	$mail->AddReplyTo($mail->From, $mail->FromName);
+// 	if (!empty($cc)) {
+// 		foreach ($cc as $email => $name) {
+// 			$mail->AddCC($email, $name);
+// 		}
+// 	}
+// 	if (!empty($bcc)) {
+// 		foreach ($bcc as $email => $name) {
+// 			$mail->AddBCC($email, $name);
+// 		}
+// 	}
+// 	if ($attachment != '') {
+// 		$mail->AddAttachment($attachment);
+// 	}
+// 	$mail->Subject = $subject;
+// 	$mail->isHTML(true);
+// 	$body = $msg;
+// 	$mail->MsgHTML($body);
+// 	$return = $mail->Send();
+// }
 function mail_header()
 {
 	$var = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -1412,6 +1412,8 @@ function create_financial_pdf($id)
 	require_once(SITE_FS_PATH . '/includes/pdf_creator/tcpdf/config/lang/eng.php');
 	require_once(SITE_FS_PATH . '/includes/pdf_creator/tcpdf/tcpdf.php');
 	$result = db_result("select f.*,ag.*,concat(a.agent_first_name,' ',a.agent_last_name) as agent_name,concat(c.client_first_name,' ',c.client_last_name) as client_name,concat(e.emp_first_name,' ',e.emp_last_name) as consultant_name from mv_files f left join mv_agent a on f.fk_agent_id=a.agent_id left join mv_agency ag on a.fk_agency_id=ag.agency_id left join mv_client c on f.fk_client_id=c.client_id left join mv_employee e on f.file_primary_staff=e.emp_id where file_id = '$id'");
+	
+	if (!class_exists('MYPDF')) {
 	class MYPDF extends TCPDF
 	{
 		public function Header()
@@ -2097,6 +2099,7 @@ if(mysqli_num_rows($file_sql)>0){
 	$pdf->Output($my_file_name, 'F');
 	return $my_file_name;
 }
+}
 function show_booked_by($file_id, $paid_by, $paid_by_other, $lead_pax, $supplier_name)
 {
 	global $ARR_PAID_BY;
@@ -2142,6 +2145,7 @@ function create_invoice_pdf($id)
 	require_once(SITE_FS_PATH . '/pdf_creator/tcpdf/config/lang/eng.php');
 	require_once(SITE_FS_PATH . '/pdf_creator/tcpdf/tcpdf.php');
 	$result = db_result("select f.*,a.*,ag.*,concat(a.agent_first_name,' ',a.agent_last_name) as agent_name,concat(c.client_first_name,' ',c.client_last_name) as client_name,concat(e.emp_first_name,' ',e.emp_last_name) as consultant_name from mv_files f left join mv_agent a on f.fk_agent_id=a.agent_id  left join mv_client c on f.fk_client_id=c.client_id left join mv_employee e on f.file_primary_staff=e.emp_id left join mv_agency ag on a.fk_agency_id=ag.agency_id where file_id = '$id'");
+	
 	class MYPDF extends TCPDF
 	{
 		//Page header
@@ -2184,7 +2188,7 @@ function create_invoice_pdf($id)
 	//set some language-dependent strings
 	$pdf->setLanguageArray($l);
 	//initialize document
-	$pdf->AliasNbPages();
+	//$pdf->AliasNbPages();
 	// set font
 	$pdf->SetFont('', '', 10);
 	// add a page
@@ -2905,6 +2909,7 @@ function get_suppliers_total($file_id)
 	$sql = db_query("select booked_with_supplier_id,booking_net_price,booking_price_currency from mv_file_transfers where fk_file_id = '$file_id' and file_transfer_status='Active'");
 	$i = 0;
 	$amount = 0;
+	$arr_qty ='';
 	while ($res = mysqli_fetch_array($sql)) {
 		$currency = $res['booking_price_currency'];
 		$amount = $res['booking_net_price'];
@@ -3602,6 +3607,8 @@ function get_tour_base_price_info($tour_id, $package_id = '', $currency = 'EUR')
 }
 function get_room_price_info($room_id, $currency = 'CAD')
 {
+	$arr ='';
+	$i='';
 	$default_markup = db_scalar("select mark_up from mv_config where config_id='1'");
 	$res = db_result("select p.*,r.room_occupancy_type from mv_room_price p left join mv_hotel_seasons s on p.fk_season_id=s.season_id left join mv_hotel_rooms r on p.fk_room_id=r.room_id where p.fk_room_id='$room_id' and s.season_status='Active'");
 	$day_of_week = date("D", strtotime($arr[$i]));

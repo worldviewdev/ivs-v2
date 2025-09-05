@@ -37,15 +37,6 @@ require_once('header.inc.php');
 
                         </div>
 
-
-                        <div class="d-flex align-items-center gap-2 gap-lg-3">
-                            <a href="#" class="btn btn-sm btn-flex btn-transparent btn-hover-outline" data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Save</a>
-                            <a href="" class="btn btn-sm btn-flex btn-outline btn-active-primary bg-body" data-bs-toggle="modal" data-bs-target="#kt_modal_view_users">
-                                <i class="ki-outline ki-eye fs-4"></i>Preview</a>
-                            <a href="" class="btn btn-sm btn-flex btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">
-                                <i class="ki-outline ki-exit-up fs-4"></i>Push</a>
-                        </div>
-
                     </div>
 
                 </div>
@@ -56,7 +47,12 @@ require_once('header.inc.php');
             <div id="kt_app_content" class="app-content flex-column-fluid">
 
                 <div id="kt_app_content_container" class="app-container container-fluid">
-
+                <div class="alert alert-success d-flex align-items-center p-5 mb-10">
+                    <i class="ki-duotone ki-shield-tick fs-2hx text-success me-4"><span class="path1"></span><span class="path2"></span></i>                    <div class="d-flex flex-column">
+                        <h4 class="mb-1 text-success">Wellcome back!!  <?php echo $_SESSION['sess_agent_name']; ?></h4>
+                        <span>Today is <?php echo date('j F Y'); ?></span>
+                    </div>
+                </div>
                     <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
 
                         <div class="col-xl-4">
@@ -81,7 +77,7 @@ require_once('header.inc.php');
                                         </div>
 
 
-                                        <span class="fs-6 fw-semibold text-gray-500">Etherium rate</span>
+                                        <span class="fs-6 fw-semibold text-gray-500">On <?php echo date('F'); ?></span>
 
                                     </h3>
 
@@ -173,33 +169,6 @@ require_once('header.inc.php');
 
                                         </li>
 
-
-                                        <li class="nav-item mb-3">
-
-                                            <a class="nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-45px h-35px" data-bs-toggle="tab" id="kt_charts_widget_33_tab_2" href="#kt_charts_widget_33_tab_content_2">5d</a>
-
-                                        </li>
-
-
-                                        <li class="nav-item mb-3">
-
-                                            <a class="nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-45px h-35px" data-bs-toggle="tab" id="kt_charts_widget_33_tab_3" href="#kt_charts_widget_33_tab_content_3">1m</a>
-
-                                        </li>
-
-
-                                        <li class="nav-item mb-3">
-
-                                            <a class="nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-45px h-35px" data-bs-toggle="tab" id="kt_charts_widget_33_tab_4" href="#kt_charts_widget_33_tab_content_4">6m</a>
-
-                                        </li>
-
-
-                                        <li class="nav-item mb-3">
-
-                                            <a class="nav-link btn btn-flex flex-center btn-active-danger btn-color-gray-600 btn-active-color-white rounded-2 w-45px h-35px" data-bs-toggle="tab" id="kt_charts_widget_33_tab_5" href="#kt_charts_widget_33_tab_content_5">1y</a>
-
-                                        </li>
 
                                     </ul>
 
@@ -526,766 +495,220 @@ require_once('header.inc.php');
                                 <div class="card-header pt-7">
 
                                     <h3 class="card-title align-items-start flex-column">
-                                        <span class="card-label fw-bold text-gray-800">Active Auctions</span>
-                                        <span class="text-gray-500 mt-1 fw-semibold fs-6">Updated 37 minutes ago</span>
+                                        <span class="card-label fw-bold text-gray-800">My Sales in Details</span>
+                                        <span class="text-gray-500 mt-1 fw-semibold fs-6">Avg. 57 orders per day</span>
                                     </h3>
 
-
-                                    <div class="card-toolbar">
-                                        <a href="apps/ecommerce/catalog/add-product.html" class="btn btn-sm btn-light">History</a>
-                                    </div>
-
                                 </div>
 
 
-                                <div class="card-body">
+                                <div class="card-body pt-2">
 
-                                    <div class="table-responsive">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-3" id="kt_table_widget_4_table">
 
-                                        <table class="table table-row-dashed align-middle gs-0 gy-3 my-0">
+                                        <thead>
 
-                                            <thead>
-                                                <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                                                    <th class="p-0 pb-3 min-w-175px text-start">ITEM</th>
-                                                    <th class="p-0 pb-3 min-w-100px text-end">OPEN PRICE</th>
-                                                    <th class="p-0 pb-3 min-w-100px text-end">YOUR OFFER</th>
-                                                    <th class="p-0 pb-3 min-w-125px text-end">RECENT OFFER</th>
-                                                    <th class="p-0 pb-3 min-w-100px text-end">TIME LEFT</th>
-                                                    <th class="p-0 pb-3 w-80px text-end">VIEW</th>
-                                                </tr>
-                                            </thead>
+                                            <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                                                <th class="min-w-100px">Order ID</th>
+                                                <th class="text-end min-w-100px">Created</th>
+                                                <th class="text-end min-w-125px">Customer</th>
+                                                <th class="text-end min-w-100px">Total</th>
+                                                <th class="text-end min-w-100px">Profit</th>
+                                                <th class="text-end min-w-50px">Status</th>
+                                                <th class="text-end"></th>
+                                            </tr>
+
+                                        </thead>
 
 
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol-50px me-3">
-                                                                <img src="assets/media/stock/600x600/img-49.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">The Art</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Jenny Wilson</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.054 ETH</span>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.089 ETH</span>
-                                                    </td>
-                                                    <td class="pe-0">
-                                                        <div class="d-flex align-items-center justify-content-end">
-                                                            <div class="symbol symbol-30px me-3">
-                                                                <img src="assets/media/avatars/300-13.jpg" class="" alt="" />
-                                                            </div>
-                                                            <span class="text-gray-600 fw-bold d-block fs-6">0.089 ETH</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">1h 43m 52s</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
+                                        <tbody class="fw-bold text-gray-600">
+                                            <tr data-kt-table-widget-4="subtable_template" class="d-none">
+                                                <td colspan="2">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <a href="#" class="symbol symbol-50px bg-secondary bg-opacity-25 rounded">
+                                                            <img src="" data-kt-src-path="assets/media/stock/ecommerce/" alt="" data-kt-table-widget-4="template_image" />
                                                         </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol-50px me-3">
-                                                                <img src="assets/media/stock/600x600/img-43.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Blue Bubble Art</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Guy Hawkins</span>
-                                                            </div>
+                                                        <div class="d-flex flex-column text-muted">
+                                                            <a href="#" class="text-gray-800 text-hover-primary fw-bold" data-kt-table-widget-4="template_name">Product name</a>
+                                                            <div class="fs-7" data-kt-table-widget-4="template_description">Product description</div>
                                                         </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">1.830 ETH</span>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">2.451 ETH</span>
-                                                    </td>
-                                                    <td class="pe-0">
-                                                        <div class="d-flex align-items-center justify-content-end">
-                                                            <div class="symbol symbol-30px me-3">
-                                                                <img src="assets/media/avatars/300-2.jpg" class="" alt="" />
-                                                            </div>
-                                                            <span class="text-gray-600 fw-bold d-block fs-6">3.083 ETH</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">4h 28m 07s</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol-50px me-3">
-                                                                <img src="assets/media/stock/600x600/img-46.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Color Face Art</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Wade Warren</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.043 ETH</span>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.124 ETH</span>
-                                                    </td>
-                                                    <td class="pe-0">
-                                                        <div class="d-flex align-items-center justify-content-end">
-                                                            <div class="symbol symbol-30px me-3">
-                                                                <img src="assets/media/avatars/300-11.jpg" class="" alt="" />
-                                                            </div>
-                                                            <span class="text-gray-600 fw-bold d-block fs-6">1.058 ETH</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">5h 09m 23s</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol-50px me-3">
-                                                                <img src="assets/media/stock/600x600/img-54.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Blue to Orange Art</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Jane Cooper</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.092 ETH</span>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.158 ETH</span>
-                                                    </td>
-                                                    <td class="pe-0">
-                                                        <div class="d-flex align-items-center justify-content-end">
-                                                            <div class="symbol symbol-30px me-3">
-                                                                <img src="assets/media/avatars/300-10.jpg" class="" alt="" />
-                                                            </div>
-                                                            <span class="text-gray-600 fw-bold d-block fs-6">0.403 ETH</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">7h 23m 16s</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol-50px me-3">
-                                                                <img src="assets/media/stock/600x600/img-45.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Awesome Bird Art</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Jacob Jones</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">0.824 ETH</span>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">1.072 ETH</span>
-                                                    </td>
-                                                    <td class="pe-0">
-                                                        <div class="d-flex align-items-center justify-content-end">
-                                                            <div class="symbol symbol-30px me-3">
-                                                                <img src="assets/media/avatars/300-9.jpg" class="" alt="" />
-                                                            </div>
-                                                            <span class="text-gray-600 fw-bold d-block fs-6">1.094 ETH</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end pe-0">
-                                                        <span class="text-gray-600 fw-bold fs-6">36h 18m 42s</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-
-                                        </table>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
-
-                        <div class="col-xl-4">
-
-                            <div class="card card-flush h-xl-100">
-
-                                <div class="card-header pt-7">
-
-                                    <h3 class="card-title align-items-start flex-column">
-                                        <span class="card-label fw-bold text-gray-800">Lading Teams</span>
-                                        <span class="text-gray-500 mt-1 fw-semibold fs-6">8k social visitors</span>
-                                    </h3>
-
-
-                                    <div class="card-toolbar"></div>
-
-                                </div>
-
-
-                                <div class="card-body pt-5">
-
-                                    <div class="">
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/atica.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Abstergo Ltd.</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Community</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">579</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-success fs-base">
-                                                        <i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>2.6%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="separator separator-dashed my-3"></div>
-
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/telegram-2.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Binford Ltd.</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Social Media</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">2,588</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-danger fs-base">
-                                                        <i class="ki-outline ki-arrow-down fs-5 text-danger ms-n1"></i>0.4%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="separator separator-dashed my-3"></div>
-
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/balloon.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Barone LLC.</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Messanger</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">794</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-success fs-base">
-                                                        <i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>0.2%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="separator separator-dashed my-3"></div>
-
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/kickstarter.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Abstergo Ltd.</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Video Channel</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">1,578</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-success fs-base">
-                                                        <i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>4.1%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="separator separator-dashed my-3"></div>
-
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/vimeo.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Biffco Enterprises</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Social Network</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">3,458</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-success fs-base">
-                                                        <i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>8.3%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="separator separator-dashed my-3"></div>
-
-
-                                        <div class="d-flex flex-stack">
-
-                                            <div class="d-flex align-items-center me-5">
-
-                                                <img src="assets/media/svg/brand-logos/plurk.svg" class="me-4 w-30px" style="border-radius: 4px" alt="" />
-
-
-                                                <div class="me-5">
-
-                                                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">Big Kahuna Burger</a>
-
-
-                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Social Network</span>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="d-flex align-items-center">
-
-                                                <span class="text-gray-800 fw-bold fs-4 me-3">2,047</span>
-
-
-                                                <div class="m-0">
-
-                                                    <span class="badge badge-light-success fs-base">
-                                                        <i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>1.9%</span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-xl-8">
-
-                            <div class="card card-flush h-xl-100">
-
-                                <div class="card-header pt-7">
-
-                                    <h3 class="card-title align-items-start flex-column">
-                                        <span class="card-label fw-bold text-gray-800">Most Popular Sellers</span>
-                                        <span class="text-gray-500 mt-1 fw-semibold fs-6">Total 424,567 deliveries</span>
-                                    </h3>
-
-
-                                    <div class="card-toolbar">
-
-                                        <div data-kt-daterangepicker="true" data-kt-daterangepicker-opens="left" class="btn btn-sm btn-light d-flex align-items-center px-4">
-
-                                            <div class="text-gray-600 fw-bold">Loading date range...</div>
-
-                                            <i class="ki-outline ki-calendar-8 text-gray-500 lh-0 fs-2 ms-2 me-0"></i>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div class="card-body pt-3 pb-4">
-
-                                    <div class="table-responsive">
-
-                                        <table class="table table-row-dashed align-middle gs-0 gy-4 my-0">
-
-                                            <thead>
-                                                <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                                                    <th class="p-0 min-w-200px"></th>
-                                                    <th class="p-0 min-w-150px"></th>
-                                                    <th class="p-0 min-w-125px"></th>
-                                                    <th class="p-0 min-w-125px"></th>
-                                                    <th class="p-0 w-100px"></th>
-                                                </tr>
-                                            </thead>
-
-
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol- symbol-40px me-3">
-                                                                <img src="assets/media/avatars/300-1.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="account/overview.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Brooklyn Simmons</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Zuid Area</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <span class="text-gray-800 fw-bold d-block mb-1 fs-6">1,240</span>
-                                                        <span class="fw-semibold text-gray-500 d-block">Deliveries</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="text-gray-800 fw-bold text-hover-primary d-block mb-1 fs-6">$5,400</a>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7">Earnings</span>
-                                                    </td>
-                                                    <td class="float-end text-end border-0">
-                                                        <div class="rating">
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7 mt-1">Rating</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-25px h-25px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol- symbol-40px me-3">
-                                                                <img src="assets/media/avatars/300-2.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="account/overview.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Annette Black</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Zuid Area</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <span class="text-gray-800 fw-bold d-block mb-1 fs-6">6,074</span>
-                                                        <span class="fw-semibold text-gray-500 d-block">Deliveries</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="text-gray-800 fw-bold text-hover-primary d-block mb-1 fs-6">$174,074</a>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7">Earnings</span>
-                                                    </td>
-                                                    <td class="float-end text-end border-0">
-                                                        <div class="rating">
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7 mt-1">Rating</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-25px h-25px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol- symbol-40px me-3">
-                                                                <img src="assets/media/avatars/300-12.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="account/overview.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Esther Howard</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Zuid Area</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <span class="text-gray-800 fw-bold d-block mb-1 fs-6">357</span>
-                                                        <span class="fw-semibold text-gray-500 d-block">Deliveries</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="text-gray-800 fw-bold text-hover-primary d-block mb-1 fs-6">$2,737</a>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7">Earnings</span>
-                                                    </td>
-                                                    <td class="float-end text-end border-0">
-                                                        <div class="rating">
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7 mt-1">Rating</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-25px h-25px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol- symbol-40px me-3">
-                                                                <img src="assets/media/avatars/300-11.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="account/overview.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Guy Hawkins</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Zuid Area</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <span class="text-gray-800 fw-bold d-block mb-1 fs-6">2,954</span>
-                                                        <span class="fw-semibold text-gray-500 d-block">Deliveries</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="text-gray-800 fw-bold text-hover-primary d-block mb-1 fs-6">$59,634</a>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7">Earnings</span>
-                                                    </td>
-                                                    <td class="float-end text-end border-0">
-                                                        <div class="rating">
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7 mt-1">Rating</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-25px h-25px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="symbol symbol- symbol-40px me-3">
-                                                                <img src="assets/media/avatars/300-3.jpg" class="" alt="" />
-                                                            </div>
-                                                            <div class="d-flex justify-content-start flex-column">
-                                                                <a href="account/overview.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">Marvin McKinney</a>
-                                                                <span class="text-gray-500 fw-semibold d-block fs-7">Zuid Area</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <span class="text-gray-800 fw-bold d-block mb-1 fs-6">822</span>
-                                                        <span class="fw-semibold text-gray-500 d-block">Deliveries</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="text-gray-800 fw-bold text-hover-primary d-block mb-1 fs-6">$19,842</a>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7">Earnings</span>
-                                                    </td>
-                                                    <td class="float-end text-end border-0">
-                                                        <div class="rating">
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                            <div class="rating-label checked">
-                                                                <i class="ki-outline ki-star fs-6"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span class="text-gray-500 fw-semibold d-block fs-7 mt-1">Rating</span>
-                                                    </td>
-                                                    <td class="text-end">
-                                                        <a href="#" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-25px h-25px">
-                                                            <i class="ki-outline ki-black-right fs-2 text-gray-500"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-
-                                        </table>
-                                    </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="text-gray-800 fs-7">Cost</div>
+                                                    <div class="text-muted fs-7 fw-bold" data-kt-table-widget-4="template_cost">1</div>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="text-gray-800 fs-7">Qty</div>
+                                                    <div class="text-muted fs-7 fw-bold" data-kt-table-widget-4="template_qty">1</div>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="text-gray-800 fs-7">Total</div>
+                                                    <div class="text-muted fs-7 fw-bold" data-kt-table-widget-4="template_total">name</div>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="text-gray-800 fs-7 me-3">On hand</div>
+                                                    <div class="text-muted fs-7 fw-bold" data-kt-table-widget-4="template_stock">32</div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#XGY-346</a>
+                                                </td>
+                                                <td class="text-end">7 min ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Albert Flores</a>
+                                                </td>
+                                                <td class="text-end">$630.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$86.70</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-warning">Pending</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#YHD-047</a>
+                                                </td>
+                                                <td class="text-end">52 min ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Jenny Wilson</a>
+                                                </td>
+                                                <td class="text-end">$25.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$4.20</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-primary">Confirmed</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#SRR-678</a>
+                                                </td>
+                                                <td class="text-end">1 hour ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Robert Fox</a>
+                                                </td>
+                                                <td class="text-end">$1,630.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$203.90</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-warning">Pending</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#PXF-534</a>
+                                                </td>
+                                                <td class="text-end">3 hour ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Cody Fisher</a>
+                                                </td>
+                                                <td class="text-end">$119.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$12.00</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-success">Shipped</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#XGD-249</a>
+                                                </td>
+                                                <td class="text-end">2 day ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Arlene McCoy</a>
+                                                </td>
+                                                <td class="text-end">$660.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$52.26</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-success">Shipped</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#SKP-035</a>
+                                                </td>
+                                                <td class="text-end">2 day ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Eleanor Pena</a>
+                                                </td>
+                                                <td class="text-end">$290.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$29.00</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-danger">Rejected</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="apps/ecommerce/catalog/edit-product.html" class="text-gray-800 text-hover-primary">#SKP-567</a>
+                                                </td>
+                                                <td class="text-end">7 min ago</td>
+                                                <td class="text-end">
+                                                    <a href="#" class="text-gray-600 text-hover-primary">Dan Wilson</a>
+                                                </td>
+                                                <td class="text-end">$590.00</td>
+                                                <td class="text-end">
+                                                    <span class="text-gray-800 fw-bolder">$50.00</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="badge py-3 px-4 fs-7 badge-light-success">Shipped</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-table-widget-4="expand_row">
+                                                        <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                        <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
 
                                 </div>
 

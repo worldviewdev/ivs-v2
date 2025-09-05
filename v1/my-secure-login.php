@@ -125,6 +125,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<h1 class="text-gray-900 fw-bolder mb-3">Sign In</h1>
 								<div class="text-gray-500 fw-semibold fs-6">Your Social Campaigns</div>
 							</div>
+							<?php if (isset($_SESSION['agent_msg']) && $_SESSION['agent_msg'] != "") { ?>
+							<div class="alert alert-danger d-flex align-items-center p-5 mb-10">
+								<i class="ki-duotone ki-shield-tick fs-2hx text-danger me-4"><span class="path1"></span><span class="path2"></span></i>
+								<div class="d-flex flex-column">
+									<span><?php echo $_SESSION['agent_msg']; ?></span>
+								</div>
+							</div>
+							<?php } ?>
 							<div class="fv-row mb-8">
 								<input type="text" placeholder="Username" name="login_id"  class="form-control bg-transparent" />
 							</div>
