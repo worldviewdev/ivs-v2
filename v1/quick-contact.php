@@ -206,9 +206,8 @@ $result = db_query($sql);
                                     </tr>
                                 </thead>
                                 <tbody class="fw-semibold text-gray-600">
-                                    <?php $i = 1;
-                                    while ($row = mysqli_fetch_assoc($result)) {
-                                    ?> <tr>
+                                    <?php $i = 1; while ($row = mysqli_fetch_assoc($result)) { ?> 
+                                        <tr>
                                             <td class="text-start">
                                                 <div class="form-check form-check-sm form-check-custom form-check-solid">
                                                     <input class="form-check-input" type="checkbox" value="1" />

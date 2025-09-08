@@ -49,6 +49,7 @@ require(MAIN_TOUR_DIR . "/functions.php");
 require_once(SITE_FS_PATH . "/includes/config.inc.php");
 require_once(SITE_FS_PATH . "/includes/funcs_lib.inc.php");
 require_once(SITE_FS_PATH . "/includes/funcs_cur.inc.php");
+require_once(SITE_FS_PATH . "/includes/helpers.php");
 if (!strstr($_SERVER['REQUEST_URI'], "fckeditor")) {
     require(SITE_FS_PATH . "/includes/arrays.inc.php");
     require(SITE_FS_PATH . '/includes/phpmailer/class.phpmailer.php');
