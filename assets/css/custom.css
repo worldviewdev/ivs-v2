@@ -1,0 +1,76 @@
+        .app-header {
+            border: none !important;
+        }
+
+        /* Base styling agar konsisten */
+        .badge {
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        /* Default abu-abu */
+        .badge-status-default {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        /* Kuning soft */
+        .badge-status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Hijau */
+        .badge-status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Abu gelap */
+        .badge-status-gray {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Biru muda */
+        .badge-status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Biru cerah */
+        .badge-status-blue {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Hijau terang */
+        .badge-status-green {
+            background-color: #e6ffed;
+            color: #155724;
+        }
+
+        /* Merah */
+        .badge-status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Pink */
+        .badge-status-pink {
+            background-color: #ffe6f0;
+            color: #a4005c;
+        }
+
+        /* Emas / kuning pekat */
+        .badge-status-gold {
+            background-color: #fff8d1;
+            color: #7a6b00;
+        }
+
+        /* Ungu */
+        .badge-status-purple {
+            background-color: #ede7f6;
+            color: #4a148c;
+        }

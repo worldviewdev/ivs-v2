@@ -8,7 +8,7 @@
 <script src="assets/plugins/global/plugins.bundle.js"></script>
 <script src="assets/js/scripts.bundle.js"></script>
 <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
-<script src="assets/js/custom/apps/ecommerce/sales/listing.js"></script>
+<!-- <script src="assets/js/custom/apps/ecommerce/sales/listing.js"></script> -->
 <!-- <script src="assets/js/custom/apps/projects/targets/targets.js"></script>
 <script src="assets/js/custom/utilities/modals/create-campaign.js"></script>
 <script src="assets/js/custom/utilities/modals/new-target.js"></script>

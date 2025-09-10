@@ -12,32 +12,35 @@ include_once('includes/midas.inc.php');
     <link href="<?php echo SITE_WS_PATH; ?>/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo SITE_WS_PATH; ?>/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo SITE_WS_PATH; ?>/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo SITE_WS_PATH; ?>/assets/css/custom.css" rel="stylesheet" type="text/css" />
     <script src="<?php echo SITE_WS_PATH; ?>/assets/js/custom.js"></script>
     <script>
-        // Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }
-        
-        // Get current page for active menu detection
         const currentPage = window.location.pathname.split('/').pop() || 'my-secure-index.php';
         const siteUrl = '<?php echo SITE_URL; ?>';
-        
-        // Dynamic Menu Data Structure
         const menuData = {
             'dashboards': [
                 { title: 'Home', link: siteUrl + '/my-secure-index.php', page: 'my-secure-index.php' },
+                <?php if ($_SESSION['sess_super_admin'] == 'SuperAdmin') { ?>,
                 { title: 'Quick Contact', link: siteUrl + '/quick-contact.php', page: 'quick-contact.php' },
                 { title: 'Transfer & Tour', link: siteUrl + '/transfer-tour.php', page: 'transfer-tour.php' },
                 { title: 'Trip Planning', link: siteUrl + '/trip-planning.php', page: 'trip-planning.php' }
+                 <?php } ?>
             ],
             'files': [
-                { title: 'File Manager', link: siteUrl + '/file-manager.php', page: 'file-manager.php' },
-                { title: 'Upload Files', link: siteUrl + '/upload.php', page: 'upload.php' },
-                { title: 'File Categories', link: siteUrl + '/file-categories.php', page: 'file-categories.php' }
+                { title: 'My Files', link: siteUrl + '/files/my-files.php', page: 'my-files.php' },
+                { title: 'Files', link: siteUrl + '/files/files.php', page: 'files.php' },
+                { title: 'Motivation Files', link: siteUrl + '/files/motivation-files.php', page: 'motivation-files.php' },
+                { title: 'File Year Current', link: siteUrl + '/files/file-year-current.php', page: 'file-year-current.php' },
+                { title: 'Abandoned Files', link: siteUrl + '/files/abandoned-files.php', page: 'abandoned-files.php' },
+                { title: 'Recently Modified', link: siteUrl + '/files/recently-modified-files.php', page: 'recently-modified-files.php' },
+                { title: 'Archived Files', link: siteUrl + '/files/archived-files.php', page: 'archived-files.php' },
+                { title: 'File Paid in Full By CC', link: siteUrl + '/files/file-paid-in-full-list.php', page: 'file-paid-in-full-list.php' }
             ],
             'users': [
-                { title: 'User List', link: siteUrl + '/users/list.php', page: 'list.php' },
-                { title: 'Add User', link: siteUrl + '/users/add.php', page: 'add.php' },
-                { title: 'User Roles', link: siteUrl + '/users/roles.php', page: 'roles.php' },
-                { title: 'Permissions', link: siteUrl + '/users/permissions.php', page: 'permissions.php' }
+                { title: 'Clients', link: siteUrl + '/users/clients.php', page: 'clients.php' },
+                { title: 'Agents', link: siteUrl + '/users/agents.php', page: 'agents.php' },
+                { title: 'Agencies', link: siteUrl + '/users/agencies.php', page: 'agencies.php' },
+                { title: 'Consortiums', link: siteUrl + '/users/users.php', page: 'users.php' }
             ],
             'products': [
                 { title: 'Product List', link: siteUrl + '/products/list.php', page: 'list.php' },
@@ -51,13 +54,9 @@ include_once('includes/midas.inc.php');
                 { title: 'Supplier Orders', link: siteUrl + '/suppliers/orders.php', page: 'orders.php' }
             ]
         };
-        
-        // Function to check if menu item is active based on current page
         function isMenuItemActive(item) {
             return currentPage === item.page;
         }
-        
-        // Function to get active primary menu based on current page
         function getActivePrimaryMenu() {
             for (const [menuKey, items] of Object.entries(menuData)) {
                 if (items.some(item => isMenuItemActive(item))) {
@@ -66,8 +65,6 @@ include_once('includes/midas.inc.php');
             }
             return 'dashboards'; // default
         }
-        
-        // Function to update secondary menu
         function updateSecondaryMenu(menuKey) {
             const secondaryMenuContainer = document.getElementById('kt_app_header_secondary_menu');
             if (!secondaryMenuContainer || !menuData[menuKey]) return;
@@ -94,32 +91,23 @@ include_once('includes/midas.inc.php');
                     </div>`;
                 }
             });
-            
             secondaryMenuContainer.innerHTML = menuHTML;
         }
         
-        // Function to handle primary menu clicks
         function handlePrimaryMenuClick(event, menuKey) {
             event.preventDefault();
-            
-            // Remove active class from all primary menu items
             document.querySelectorAll('.menu-item.here').forEach(item => {
                 item.classList.remove('here', 'menu-here-bg');
             });
             
-            // Add active class to clicked menu item
             const clickedMenuItem = event.target.closest('.menu-item');
             if (clickedMenuItem) {
                 clickedMenuItem.classList.add('here', 'menu-here-bg');
             }
-            
-            // Update secondary menu
             updateSecondaryMenu(menuKey);
         }
         
-        // Initialize menu system when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Set up click handlers for primary menu items
             const menuItems = {
                 'dashboards': document.querySelector('[data-menu="dashboards"]'),
                 'files': document.querySelector('[data-menu="files"]'),
@@ -135,10 +123,8 @@ include_once('includes/midas.inc.php');
                 }
             });
             
-            // Get active menu based on current page
             const activePrimaryMenu = getActivePrimaryMenu();
-            
-            // Set active primary menu
+
             Object.keys(menuItems).forEach(menuKey => {
                 const menuElement = menuItems[menuKey];
                 if (menuElement) {
@@ -149,16 +135,11 @@ include_once('includes/midas.inc.php');
                     }
                 }
             });
-            
-            // Initialize with active menu based on current page
+
             updateSecondaryMenu(activePrimaryMenu);
         });
     </script>
-    <style>
-        .app-header {
-            border: none !important;
-}
-    </style>
+
 </head>
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-header-stacked="true" data-kt-app-header-primary-enabled="true" data-kt-app-header-secondary-enabled="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
