@@ -1,76 +1,272 @@
-        .app-header {
-            border: none !important;
-        }
+.app-header {
+    border: none !important;
+}
 
-        /* Base styling agar konsisten */
-        .badge {
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 6px;
-        }
+/* Base styling agar konsisten */
 
-        /* Default abu-abu */
-        .badge-status-default {
-            background-color: #f1f1f1;
-            color: #333;
-        }
 
-        /* Kuning soft */
-        .badge-status-warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
+/* Default abu-abu */
+.status-default {
+    background-color: #8b8b8b !important;
+    color: #495057 !important;
+    border-left: 4px solid #6c757d !important;
+}
 
-        /* Hijau */
-        .badge-status-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
+/* Kuning soft */
+.status-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-left: 4px solid #ffc107 !important;
+    font-weight: 500 !important;
+}
 
-        /* Abu gelap */
-        .badge-status-gray {
-            background-color: #e2e3e5;
-            color: #383d41;
-        }
+/* Hijau */
+.status-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left: 4px solid #28a745 !important;
+    font-weight: 500 !important;
+}
 
-        /* Biru muda */
-        .badge-status-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
+/* Abu gelap */
+.status-gray {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    border-left: 4px solid #6c757d !important;
+}
 
-        /* Biru cerah */
-        .badge-status-blue {
-            background-color: #cce5ff;
-            color: #004085;
-        }
+/* Biru muda */
+.status-info {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-left: 4px solid #17a2b8 !important;
+    font-weight: 500 !important;
+}
 
-        /* Hijau terang */
-        .badge-status-green {
-            background-color: #e6ffed;
-            color: #155724;
-        }
+/* Biru cerah */
+.status-blue {
+    background-color: #cce5ff !important;
+    color: #004085 !important;
+    border-left: 4px solid #007bff !important;
+    font-weight: 500 !important;
+}
 
-        /* Merah */
-        .badge-status-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
+/* Hijau terang */
+.status-green {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left: 4px solid #28a745 !important;
+    font-weight: 600 !important;
+}
 
-        /* Pink */
-        .badge-status-pink {
-            background-color: #ffe6f0;
-            color: #a4005c;
-        }
+/* Merah */
+.status-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-left: 4px solid #dc3545 !important;
+    font-weight: 500 !important;
+}
 
-        /* Emas / kuning pekat */
-        .badge-status-gold {
-            background-color: #fff8d1;
-            color: #7a6b00;
-        }
+/* Pink */
+.status-pink {
+    background-color: #ffe6f0 !important;
+    color: #a4005c !important;
+    border-left: 4px solid #e91e63 !important;
+    font-weight: 500 !important;
+}
 
-        /* Ungu */
-        .badge-status-purple {
-            background-color: #ede7f6;
-            color: #4a148c;
-        }
+/* Emas / kuning pekat */
+.status-gold {
+    background-color: #fff8d1 !important;
+    color: #7a6b00 !important;
+    border-left: 4px solid #ffc107 !important;
+    font-weight: 600 !important;
+}
+
+/* Ungu */
+.status-purple {
+    background-color: #ede7f6 !important;
+    color: #4a148c !important;
+    border-left: 4px solid #9c27b0 !important;
+    font-weight: 500 !important;
+}
+
+/* Status Row Styling - Full Row Background */
+.status-default {
+    background-color: #8b8b8b !important;
+    color: #495057 !important;
+    border-left: 4px solid #6c757d !important;
+}
+
+.status-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-left: 4px solid #ffc107 !important;
+    font-weight: 500 !important;
+}
+
+.status-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left: 4px solid #28a745 !important;
+    font-weight: 500 !important;
+}
+
+.status-gray {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    border-left: 4px solid #6c757d !important;
+}
+
+.status-info {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-left: 4px solid #17a2b8 !important;
+    font-weight: 500 !important;
+}
+
+.status-blue {
+    background-color: #cce5ff !important;
+    color: #004085 !important;
+    border-left: 4px solid #007bff !important;
+    font-weight: 500 !important;
+}
+
+.status-green {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left: 4px solid #28a745 !important;
+    font-weight: 600 !important;
+}
+
+.status-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-left: 4px solid #dc3545 !important;
+    font-weight: 500 !important;
+}
+
+.status-pink {
+    background-color: #ffe6f0 !important;
+    color: #a4005c !important;
+    border-left: 4px solid #e91e63 !important;
+    font-weight: 500 !important;
+}
+
+.status-gold {
+    background-color: #fff8d1 !important;
+    color: #7a6b00 !important;
+    border-left: 4px solid #ffc107 !important;
+    font-weight: 600 !important;
+}
+
+.status-purple {
+    background-color: #ede7f6 !important;
+    color: #4a148c !important;
+    border-left: 4px solid #9c27b0 !important;
+    font-weight: 500 !important;
+}
+
+/* CRITICAL: Force full row background */
+.table tbody tr[class*="status-"] {
+    background-color: inherit !important;
+}
+
+.table tbody tr[class*="status-"] td {
+    background-color: inherit !important;
+    border-top: none !important;
+    vertical-align: middle !important;
+    padding: 12px 8px !important;
+}
+
+/* Override any Bootstrap or DataTable styling */
+#kt_datatable_vertical_scroll tbody tr[class*="status-"] {
+    background-color: inherit !important;
+}
+
+#kt_datatable_vertical_scroll tbody tr[class*="status-"] td {
+    background-color: inherit !important;
+}
+
+/* Force inheritance for all cells in status rows */
+tr[class*="status-"] td {
+    background-color: inherit !important;
+    background: inherit !important;
+}
+
+/* Hover effects */
+tr[class*="status-"]:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Status indicator dan badge */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status indicator colors */
+.status-warning .status-indicator { background-color: #ffc107; }
+.status-success .status-indicator { background-color: #28a745; }
+.status-gray .status-indicator { background-color: #6c757d; }
+.status-info .status-indicator { background-color: #17a2b8; }
+.status-blue .status-indicator { background-color: #007bff; }
+.status-green .status-indicator { background-color: #28a745; }
+.status-danger .status-indicator { background-color: #dc3545; }
+.status-pink .status-indicator { background-color: #e91e63; }
+.status-gold .status-indicator { background-color: #ffc107; }
+.status-purple .status-indicator { background-color: #9c27b0; }
+.status-default .status-indicator { background-color: #8b8b8b; }
+
+/* NUCLEAR OPTION - Force full background */
+tr.status-warning,
+tr.status-success,
+tr.status-gray,
+tr.status-info,
+tr.status-blue,
+tr.status-green,
+tr.status-danger,
+tr.status-pink,
+tr.status-gold,
+tr.status-purple {
+    background-color: inherit !important;
+    background: inherit !important;
+}
+
+tr.status-warning td,
+tr.status-success td,
+tr.status-gray td,
+tr.status-info td,
+tr.status-blue td,
+tr.status-green td,
+tr.status-danger td,
+tr.status-pink td,
+tr.status-gold td,
+tr.status-purple td {
+    background-color: inherit !important;
+    background: inherit !important;
+}
+
+/* Override DataTables styling */
+.dataTable tbody tr[class*="status-"] {
+    background-color: inherit !important;
+}
+
+.dataTable tbody tr[class*="status-"] td {
+    background-color: inherit !important;
+}
