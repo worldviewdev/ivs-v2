@@ -4,6 +4,7 @@ assets1/
 
 # Ignore demo60 file/folder
 v1/demo60
+v2/
 assets/media
 /.specstory
 /.vscode
