@@ -22,8 +22,7 @@ require_once('includes/midas.inc.php');
                     title: 'Home',
                     link: siteUrl + '/my-secure-index.php',
                     page: 'my-secure-index.php'
-                },
-                <?php if ($_SESSION['sess_super_admin'] == 'SuperAdmin') { ?>,
+                }<?php if ($_SESSION['sess_super_admin'] == 'SuperAdmin') { ?>,
                     {
                         title: 'Quick Contact',
                         link: siteUrl + '/quick-contact.php',
@@ -143,12 +142,12 @@ require_once('includes/midas.inc.php');
         };
 
         function isMenuItemActive(item) {
-            return currentPage === item.page;
+            return item && item.page && currentPage === item.page;
         }
 
         function getActivePrimaryMenu() {
             for (const [menuKey, items] of Object.entries(menuData)) {
-                if (items.some(item => isMenuItemActive(item))) {
+                if (items.some(item => item && item.page && isMenuItemActive(item))) {
                     return menuKey;
                 }
             }
@@ -159,7 +158,7 @@ require_once('includes/midas.inc.php');
             // Cari di semua menu untuk mendapatkan title berdasarkan currentPage
             for (const [menuKey, items] of Object.entries(menuData)) {
                 for (const item of items) {
-                    if (item.page === currentPage) {
+                    if (item && item.page && item.page === currentPage) {
                         return item.title;
                     }
                 }
