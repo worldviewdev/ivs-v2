@@ -12,8 +12,6 @@ $sql .= " limit $start, $pagesize ";
 $result = db_query($sql);
 ?>
 
-
-
 <div id="kt_app_content" class="app-content flex-column-fluid">
 
     <div id="kt_app_content_container" class="app-container container-fluid">
@@ -41,21 +39,14 @@ $result = db_query($sql);
                         </button>
                     </div>
 
-                    <div class="w-100 mw-150px">
+                    <div class="w-350px mw-350px">
 
-                        <select class="form-select form-select-solid" data-control="select2" data-hide-search="true" data-placeholder="Status" data-kt-ecommerce-order-filter="status">
+                        <select name="status_filter" id="status_filter" class="form-select form-select-solid" data-control="select2" data-hide-search="true" data-placeholder="Status" data-kt-ecommerce-order-filter="status">
                             <option></option>
-                            <option value="all">All</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Denied">Denied</option>
-                            <option value="Expired">Expired</option>
-                            <option value="Failed">Failed</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Refunded">Refunded</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Delivering">Delivering</option>
+                            <?php foreach($arr_file_status as $key => $value): ?>
+                                <option style="font-size: 8px;" value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($value) ?></option>
+                            <?php endforeach; ?>
+                            
                         </select>
 
                     </div>
@@ -83,62 +74,12 @@ $result = db_query($sql);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $i = 1;
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $status = $row['file_current_status'];
-                            $statusText = $arr_file_status[$status] ?? '-';
-
-                            // Mapping ke custom badge class
-                            $statusClasses = [
-                                2  => "status-warning",
-                                3  => "status-warning",
-                                9  => "status-success",
-                                10 => "status-gray",
-                                11 => "status-info",
-                                12 => "status-blue",
-                                13 => "status-green",
-                                8  => "status-danger",
-                                14 => "status-pink",
-                                15 => "status-gold",
-                                58 => "status-purple",
-                            ];
-                            $cls = $statusClasses[$status] ?? "status-default";
-                            
-                            // Inline style untuk background
-                            $bgColors = [
-                                2  => "#fff3cd",
-                                3  => "#fff3cd",
-                                9  => "#d4edda", 
-                                10 => "#e9ecef",
-                                11 => "#d1ecf1",
-                                12 => "#cce5ff",
-                                13 => "#d4edda",
-                                8  => "#f8d7da",
-                                14 => "#ffe6f0",
-                                15 => "#fff8d1",
-                                58 => "#ede7f6",
-                            ];
-                            $bgColor = $bgColors[$status] ?? "#f8f9fa";
-                        ?>
-                            <tr class="<?= $cls ?>" style="background-color: <?= $bgColor ?> !important;">
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['file_code'] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['file_arrival_date'] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['client_name'] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['agent_name'] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['active_staff_name'] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;">
-                                    <span class="status-indicator"></span>
-                                    <span class="status-badge"><?= $arr_file_status[$row['file_current_status']] ?></span>
-                                </td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $arr_file_types[$row['file_type']] ?></td>
-                                <td style="background-color: <?= $bgColor ?> !important;"><?= $row['file_type_desc'] ?></td>
-                            </tr>
-                        <?php } ?>
+                        <!-- Data akan diisi oleh DataTable AJAX -->
                     </tbody>
                 </table>
 
-                <?php //$pager->show_pager(); 
-                ?>
+                <!-- Hapus pager lama karena sudah diganti dengan DataTable pagination -->
+                <!-- <?php $pager->show_pager(); ?> -->
 
             </div>
 
@@ -147,6 +88,9 @@ $result = db_query($sql);
     </div>
 
 </div>
+
+<!-- Tambahkan script untuk DataTable -->
+
 
 <?php
 require_once('../footer.inc.php');

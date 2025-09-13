@@ -2,7 +2,6 @@
 require_once('includes/midas.inc.php');
 ?>
 <html lang="en">
-
 <head>
     <base href="<?php echo SITE_WS_PATH; ?>" />
     <title><?php echo SITE_NAME; ?>:: Control Panel</title>
@@ -140,11 +139,9 @@ require_once('includes/midas.inc.php');
                 }
             ]
         };
-
         function isMenuItemActive(item) {
             return item && item.page && currentPage === item.page;
         }
-
         function getActivePrimaryMenu() {
             for (const [menuKey, items] of Object.entries(menuData)) {
                 if (items.some(item => item && item.page && isMenuItemActive(item))) {
@@ -153,7 +150,6 @@ require_once('includes/midas.inc.php');
             }
             return 'dashboards'; // default
         }
-
         function getPageTitle() {
             // Cari di semua menu untuk mendapatkan title berdasarkan currentPage
             for (const [menuKey, items] of Object.entries(menuData)) {
@@ -163,7 +159,6 @@ require_once('includes/midas.inc.php');
                     }
                 }
             }
-            
             // Jika tidak ditemukan, gunakan default berdasarkan currentPage
             const pageTitleMap = {
                 'my-secure-index.php': 'Dashboard',
@@ -188,24 +183,19 @@ require_once('includes/midas.inc.php');
                 'inventory.php': 'Inventory',
                 'orders.php': 'Supplier Orders'
             };
-            
             return pageTitleMap[currentPage] || 'Home';
         }
-
         function updatePageHeading() {
             const pageHeading = document.querySelector('.page-heading');
             if (pageHeading) {
                 pageHeading.textContent = getPageTitle();
             }
         }
-
         function updateSecondaryMenu(menuKey) {
             const secondaryMenuContainer = document.getElementById('kt_app_header_secondary_menu');
             if (!secondaryMenuContainer || !menuData[menuKey]) return;
-
             const menuItems = menuData[menuKey];
             let menuHTML = '';
-
             menuItems.forEach((item, index) => {
                 const activeClass = isMenuItemActive(item) ? ' active' : '';
                 menuHTML += `
@@ -214,7 +204,6 @@ require_once('includes/midas.inc.php');
                             <span class="menu-title">${item.title}</span>
                         </a>
                     </div>`;
-
                 // Add separator between items (except last item)
                 if (index < menuItems.length - 1) {
                     menuHTML += `
@@ -227,20 +216,17 @@ require_once('includes/midas.inc.php');
             });
             secondaryMenuContainer.innerHTML = menuHTML;
         }
-
         function handlePrimaryMenuClick(event, menuKey) {
             event.preventDefault();
             document.querySelectorAll('.menu-item.here').forEach(item => {
                 item.classList.remove('here', 'menu-here-bg');
             });
-
             const clickedMenuItem = event.target.closest('.menu-item');
             if (clickedMenuItem) {
                 clickedMenuItem.classList.add('here', 'menu-here-bg');
             }
             updateSecondaryMenu(menuKey);
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             const menuItems = {
                 'dashboards': document.querySelector('[data-menu="dashboards"]'),
@@ -249,16 +235,13 @@ require_once('includes/midas.inc.php');
                 'products': document.querySelector('[data-menu="products"]'),
                 'suppliers': document.querySelector('[data-menu="suppliers"]')
             };
-
             Object.keys(menuItems).forEach(menuKey => {
                 const menuElement = menuItems[menuKey];
                 if (menuElement) {
                     menuElement.addEventListener('click', (e) => handlePrimaryMenuClick(e, menuKey));
                 }
             });
-
             const activePrimaryMenu = getActivePrimaryMenu();
-
             Object.keys(menuItems).forEach(menuKey => {
                 const menuElement = menuItems[menuKey];
                 if (menuElement) {
@@ -269,14 +252,11 @@ require_once('includes/midas.inc.php');
                     }
                 }
             });
-
             updateSecondaryMenu(activePrimaryMenu);
             updatePageHeading(); // Tambahkan ini untuk mengupdate page heading
         });
     </script>
-
 </head>
-
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-header-stacked="true" data-kt-app-header-primary-enabled="true" data-kt-app-header-secondary-enabled="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
         <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
@@ -429,43 +409,24 @@ require_once('includes/midas.inc.php');
                     </div>
                 </div>
             </div>
-
             <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
-
                 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
-
                     <div class="d-flex flex-column flex-column-fluid">
-
                         <div id="kt_app_toolbar" class="app-toolbar pt-10 mb-0">
-
                             <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex align-items-stretch">
-
                                 <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
-
                                     <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
-
                                         <h1 class="page-heading d-flex flex-column justify-content-center text-gray-900 fw-bold fs-3 m-0" id="dynamic-page-heading">Loading...</h1>
-
-
                                         <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0">
-
                                             <li class="breadcrumb-item text-gray-600">
                                                 <a href="index.html" class="text-gray-600 text-hover-primary">Home</a>
                                             </li>
-
-
                                             <li class="breadcrumb-item">
                                                 <span class="bullet bg-gray-500 w-5px h-2px"></span>
                                             </li>
-
-
                                             <li class="breadcrumb-item text-gray-600">Quick Contact</li>
-
                                         </ul>
-
                                     </div>
-
-
                                     <div class="d-flex align-items-center gap-2 gap-lg-3">
                                         <a href="#" class="btn btn-sm btn-flex btn-transparent btn-hover-outline" data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Save</a>
                                         <a href="" class="btn btn-sm btn-flex btn-outline btn-active-primary bg-body" data-bs-toggle="modal" data-bs-target="#kt_modal_view_users">
@@ -473,9 +434,6 @@ require_once('includes/midas.inc.php');
                                         <a href="" class="btn btn-sm btn-flex btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">
                                             <i class="ki-outline ki-exit-up fs-4"></i>Push</a>
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>

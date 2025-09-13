@@ -95,6 +95,7 @@
 <script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>
 <script src="assets/js/custom/utilities/modals/users-search.js"></script> -->
 <script src="<?php echo SITE_WS_PATH; ?>/assets/js/custom.js"></script>
+<script src="<?php echo SITE_WS_PATH; ?>/assets/js/my-files-datatable.js"></script>
 </body>
 
 </html>

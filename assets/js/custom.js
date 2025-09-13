@@ -15,4 +15,4 @@ if (document.documentElement) {
     }
     document.documentElement.setAttribute("data-bs-theme", themeMode);
 }
-$("#kt_datatable_vertical_scroll").DataTable();
+// $("#kt_datatable_vertical_scroll").DataTable();
