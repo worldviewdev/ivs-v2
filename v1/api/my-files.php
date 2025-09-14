@@ -40,7 +40,7 @@ try {
     } else {
         $orderBy .= ' ASC';
     }
-    
+    $sql_add = " AND (file_primary_staff='" . $_SESSION['sess_agent_id'] . "' OR file_active_staff='" . $_SESSION['sess_agent_id'] . "')";
     // Query utama
     $baseSql = "SELECT f.*, 
                 CONCAT(emp_first_name,' ',emp_last_name) as active_staff_name,
@@ -53,7 +53,7 @@ try {
                 LEFT JOIN mv_agency ag ON ag.agency_id=a.fk_agency_id 
                 WHERE file_status!='Delete' 
                 AND file_admin_type = 'Admin' 
-                AND (file_primary_staff='80' OR file_active_staff='80') 
+                $sql_add
                 AND is_package_file='No'";
     
     // Tambahkan search filter

@@ -59,7 +59,7 @@ $result_sales_paid = db_query($sql_sales_paid);
 
                                     <div class="d-flex fs-6 fw-semibold align-items-center">
 
-                                        <div id="kt_card_widget_19_chart" class="min-h-auto" data-kt-size="250" data-kt-line="25"><span></span></div>
+                                        <canvas id="kt_chartjs_3" class="mh-400px"></canvas>
 
                                     </div>
 

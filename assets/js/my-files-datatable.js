@@ -46,9 +46,9 @@ $(document).ready(function() {
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         order: [[0, 'desc']],
         language: {
-            processing: "Memproses...",
+            processing: "Processing...",
             lengthMenu: "_MENU_",
-            zeroRecords: "Tidak ada data yang ditemukan",
+            zeroRecords: "No data found",
             info: "_START_ to _END_ of _TOTAL_ entries",
             infoEmpty: "Showing 0 to 0 of 0 entries",
             infoFiltered: "(filtered from _MAX_ total entries)",
