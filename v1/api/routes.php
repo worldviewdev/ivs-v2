@@ -38,6 +38,18 @@ return [
             'controller' => 'AuthController',
             'action' => 'refresh',
             'auth' => true
+        ],
+        '/quick-contact/all' => [
+            'controller' => 'QuickContactController',
+            'action' => 'all',
+            'auth' => true,
+            'permission' => 'read_quick_contact'
+        ],
+        '/quick-contact/{id}' => [
+            'controller' => 'QuickContactController',
+            'action' => 'show',
+            'auth' => true,
+            'permission' => 'read_quick_contact'
         ]
     ],
     'POST' => [
