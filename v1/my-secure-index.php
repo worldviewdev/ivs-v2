@@ -350,7 +350,7 @@ $(document).ready(function() {
     const latestFilesTable = createDataTable('files', {
         ajax: {
             tableId: '#kt_datatable_vertical_scroll',
-            url: 'api/files.php',
+            url: 'api/files',
             data: function(d) {
                 return {
                     ...d,
@@ -376,7 +376,7 @@ $(document).ready(function() {
     const salesPaidTable = createDataTable('files', {
         tableId: '#kt_datatable_vertical_scroll_2',
         ajax: {
-            url: 'api/files.php',
+            url: 'api/files',
             data: function(d) {
                 return {
                     ...d,
