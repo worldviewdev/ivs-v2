@@ -5,6 +5,18 @@ class FileController
 {
     public function index()
     {
+        // Check if this is a request for latest files
+        if (isset($_GET['action']) && $_GET['action'] === 'get_latest_files') {
+            $this->getLatestFiles();
+            return;
+        }
+
+        // Check if this is a request for sales paid files
+        if (isset($_GET['action']) && $_GET['action'] === 'get_sales_paid') {
+            $this->getSalesPaid();
+            return;
+        }
+
         $draw = (int)($_GET['draw'] ?? 1);
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
@@ -58,6 +70,88 @@ class FileController
             'draw' => $draw,
             'recordsTotal' => $total,
             'recordsFiltered' => $total,
+            'data' => $processedFiles
+        ]);
+    }
+
+    public function getLatestFiles()
+    {
+        $limit = (int)($_GET['limit'] ?? 7);
+        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+
+        $repo = new FileRepository();
+        $files = $repo->getLatestFiles($agentId, $limit);
+
+        // Process files to add status info
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            $processedFiles[] = [
+                'file_id' => $file['file_id'],
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $file['file_arrival_date'],
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $file['file_type_desc'],
+                'notes' => '', // Add empty notes field
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+
+        Response::json([
+            'data' => $processedFiles
+        ]);
+    }
+
+    public function getSalesPaid()
+    {
+        $limit = (int)($_GET['limit'] ?? 7);
+        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+
+        $repo = new FileRepository();
+        $files = $repo->getSalesPaid($agentId, $limit);
+
+        // Process files to add status info
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            $processedFiles[] = [
+                'file_id' => $file['file_id'],
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $file['file_departure_date'], // Use departure_date as arrival_date for consistency
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $file['file_type_desc'],
+                'notes' => '', // Add empty notes field for consistency
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+
+        Response::json([
             'data' => $processedFiles
         ]);
     }

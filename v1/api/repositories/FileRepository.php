@@ -62,6 +62,33 @@ class FileRepository
         return $stmt->fetchAll();
     }
 
+    public function getLatestFiles($agentId, $limit = 7)
+    {
+        $db = Database::conn();
+
+        $sql = "SELECT f.*,
+                   CONCAT(e.emp_first_name,' ',e.emp_last_name) AS active_staff_name,
+                   CONCAT(c.client_first_name,' ',c.client_last_name) AS client_name,
+                   CONCAT(a.agent_first_name,' ',a.agent_last_name) AS agent_name
+                FROM mv_files f
+                LEFT JOIN mv_employee e ON f.file_active_staff = e.emp_id
+                LEFT JOIN mv_client c ON f.fk_client_id = c.client_id
+                LEFT JOIN mv_agent a ON f.fk_agent_id = a.agent_id
+                WHERE f.file_status != 'Delete'
+                  AND f.file_admin_type = 'Admin'
+                  AND (f.file_primary_staff = :agentId OR f.file_active_staff = :agentId)
+                  AND f.is_package_file = 'No'
+                ORDER BY f.file_id DESC
+                LIMIT :limit";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':agentId', $agentId, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function getAllFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $myFiles = true, $statusFilter = '', $dateFilter = '', $dateFrom = '', $dateTo = '')
     {
         $db = Database::conn();
@@ -292,6 +319,35 @@ class FileRepository
         }
 
         return false;
+    }
+
+    public function getSalesPaid($agentId, $limit = 7)
+    {
+        $db = Database::conn();
+
+        $sql = "SELECT f.*, 
+                CONCAT(emp_first_name,' ',emp_last_name) as active_staff_name,
+                CONCAT(client_first_name,' ',client_last_name) as client_name,
+                CONCAT(agent_first_name,' ',agent_last_name) as agent_name,
+                f.file_type_desc
+                FROM mv_files f 
+                LEFT JOIN mv_employee e ON f.file_active_staff=e.emp_id  
+                LEFT JOIN mv_client c ON f.fk_client_id=c.client_id 
+                LEFT JOIN mv_agent a ON f.fk_agent_id=a.agent_id 
+                LEFT JOIN mv_agency ag ON ag.agency_id=a.fk_agency_id 
+                WHERE file_status!='Delete' 
+                AND file_admin_type = 'Admin' 
+                AND file_current_status IN (2,3) 
+                AND (file_primary_staff=:agent_id OR file_active_staff=:agent_id) 
+                ORDER BY file_id DESC 
+                LIMIT :limit";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':agent_id', $agentId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function deleteFile($id)

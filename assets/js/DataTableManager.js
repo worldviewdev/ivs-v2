@@ -225,6 +225,25 @@ const DataTableConfigs = {
         ]
     },
 
+    // Sales Paid DataTable configuration - same structure as files
+    sales_paid: {
+        columns: [
+            { data: 'file_code' },
+            { data: 'file_departure_date' },
+            { data: 'client_name' },
+            { data: 'agent_name' },
+            { data: 'active_staff_name' },
+            { 
+                data: 'status',
+                render: function(data, type, row) {
+                    return '<span class="status-indicator"></span><span class="status-badge">' + data.text + '</span>';
+                }
+            },
+            { data: 'file_type_text' },
+            { data: 'file_type_desc' }
+        ]
+    },
+
     // User DataTable configuration (contoh untuk future use)
     users: {
         columns: [

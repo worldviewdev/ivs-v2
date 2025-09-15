@@ -49000,14 +49000,16 @@ table.dataTable th {
   border-bottom-color: var(--bs-table-border-color);
 }
 
-#kt_datatable_vertical_scroll {
+#kt_datatable_vertical_scroll,
+#kt_datatable_vertical_scroll_2 {
   border-collapse: collapse !important;
   border-spacing: 0 !important;
   width: 100% !important;
   margin-bottom: 0 !important;
   border: none !important;
 }
-#kt_datatable_vertical_scroll thead th {
+#kt_datatable_vertical_scroll thead th,
+#kt_datatable_vertical_scroll_2 thead th {
   background-color: #f8f9fa !important;
   border: 1px solid #e4e6ea !important;
   border-bottom: 2px solid #e4e6ea !important;
@@ -49021,13 +49023,16 @@ table.dataTable th {
   border-left: none !important;
   border-right: none !important;
 }
-#kt_datatable_vertical_scroll thead th:first-child {
+#kt_datatable_vertical_scroll thead th:first-child,
+#kt_datatable_vertical_scroll_2 thead th:first-child {
   border-left: 1px solid #e4e6ea !important;
 }
-#kt_datatable_vertical_scroll thead th:last-child {
+#kt_datatable_vertical_scroll thead th:last-child,
+#kt_datatable_vertical_scroll_2 thead th:last-child {
   border-right: 1px solid #e4e6ea !important;
 }
-#kt_datatable_vertical_scroll tbody td {
+#kt_datatable_vertical_scroll tbody td,
+#kt_datatable_vertical_scroll_2 tbody td {
   border: 1px solid #e4e6ea !important;
   border-top: none !important;
   padding: 12px 8px !important;
@@ -49037,23 +49042,30 @@ table.dataTable th {
   border-left: none !important;
   border-right: none !important;
 }
-#kt_datatable_vertical_scroll tbody td:first-child {
+#kt_datatable_vertical_scroll tbody td:first-child,
+#kt_datatable_vertical_scroll_2 tbody td:first-child {
   border-left: 1px solid #e4e6ea !important;
 }
-#kt_datatable_vertical_scroll tbody td:last-child {
+#kt_datatable_vertical_scroll tbody td:last-child,
+#kt_datatable_vertical_scroll_2 tbody td:last-child {
   border-right: 1px solid #e4e6ea !important;
 }
-#kt_datatable_vertical_scroll tbody tr:nth-child(even) {
+#kt_datatable_vertical_scroll tbody tr:nth-child(even),
+#kt_datatable_vertical_scroll_2 tbody tr:nth-child(even) {
   background-color: #fafbfc !important;
 }
-#kt_datatable_vertical_scroll tbody tr:nth-child(odd) {
+#kt_datatable_vertical_scroll tbody tr:nth-child(odd),
+#kt_datatable_vertical_scroll_2 tbody tr:nth-child(odd) {
   background-color: #ffffff !important;
 }
-#kt_datatable_vertical_scroll tbody tr:hover {
+#kt_datatable_vertical_scroll tbody tr:hover,
+#kt_datatable_vertical_scroll_2 tbody tr:hover {
   background-color: #f1f3f6 !important;
 }
 #kt_datatable_vertical_scroll thead .dt-ordering-asc:after,
-#kt_datatable_vertical_scroll thead .dt-ordering-desc:after {
+#kt_datatable_vertical_scroll thead .dt-ordering-desc:after,
+#kt_datatable_vertical_scroll_2 thead .dt-ordering-asc:after,
+#kt_datatable_vertical_scroll_2 thead .dt-ordering-desc:after {
   position: absolute !important;
   right: 8px !important;
   top: 50% !important;
@@ -49064,58 +49076,73 @@ table.dataTable th {
   color: #a1a5b7 !important;
 }
 
-[data-bs-theme=dark] #kt_datatable_vertical_scroll thead th {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll thead th,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 thead th {
   background-color: #26272F !important;
   border-color: #363843 !important;
   color: #F5F5F5 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody td {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody td,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 tbody td {
   border-color: #363843 !important;
   color: #F5F5F5 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:nth-child(even) {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:nth-child(even),
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 tbody tr:nth-child(even) {
   background-color: #1B1C22 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:nth-child(odd) {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:nth-child(odd),
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 tbody tr:nth-child(odd) {
   background-color: #1C1D22 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:hover {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll tbody tr:hover,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 tbody tr:hover {
   background-color: #26272F !important;
 }
 [data-bs-theme=dark] #kt_datatable_vertical_scroll thead .dt-ordering-asc:after,
-[data-bs-theme=dark] #kt_datatable_vertical_scroll thead .dt-ordering-desc:after {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll thead .dt-ordering-desc:after,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 thead .dt-ordering-asc:after,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2 thead .dt-ordering-desc:after {
   color: #636674 !important;
 }
 
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable thead th {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable thead th,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable thead th {
   background-color: #26272F !important;
   border-color: #363843 !important;
   color: #F5F5F5 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody td {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody td,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable tbody td {
   background-color: transparent !important;
   border-color: #363843 !important;
   color: #F5F5F5 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable tbody tr {
   background-color: transparent !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:nth-child(even) {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:nth-child(even),
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable tbody tr:nth-child(even) {
   background-color: #1B1C22 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:nth-child(odd) {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:nth-child(odd),
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable tbody tr:nth-child(odd) {
   background-color: #1C1D22 !important;
 }
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:hover {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.dataTable tbody tr:hover,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.dataTable tbody tr:hover {
   background-color: #26272F !important;
 }
 
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.table-striped > tbody > tr:nth-of-type(2n+1) > * {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.table-striped > tbody > tr:nth-of-type(2n+1) > *,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.table-striped > tbody > tr:nth-of-type(2n+1) > * {
   box-shadow: none !important;
   background-color: #1B1C22 !important;
 }
 
-[data-bs-theme=dark] #kt_datatable_vertical_scroll.table-striped > tbody > tr:nth-of-type(2n) > * {
+[data-bs-theme=dark] #kt_datatable_vertical_scroll.table-striped > tbody > tr:nth-of-type(2n) > *,
+[data-bs-theme=dark] #kt_datatable_vertical_scroll_2.table-striped > tbody > tr:nth-of-type(2n) > * {
   box-shadow: none !important;
   background-color: #1C1D22 !important;
 }
