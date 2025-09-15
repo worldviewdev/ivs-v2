@@ -51,7 +51,7 @@ $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
 
                     </div>
 
-                    <a href="apps/ecommerce/catalog/add-product.html" class="btn btn-primary">Add Order</a>
+                    
 
                 </div>
 

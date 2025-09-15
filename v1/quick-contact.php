@@ -176,7 +176,7 @@ $result = db_query($sql);
 
                                 </div>
 
-                                <a href="apps/ecommerce/catalog/add-product.html" class="btn btn-primary">Add Order</a>
+                                
 
                             </div>
 
