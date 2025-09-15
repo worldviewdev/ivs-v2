@@ -1,17 +1,72 @@
 <?php
 return [
     'GET' => [
-        '/files' => ['FileController', 'index'],
-        '/files/all' => ['FileController', 'allFiles'],
-        '/files/{id}' => ['FileController', 'show'],
+        '/files' => [
+            'controller' => 'FileController',
+            'action' => 'index',
+            'auth' => true,
+            'permission' => 'read_files'
+        ],
+        '/files/all' => [
+            'controller' => 'FileController',
+            'action' => 'allFiles',
+            'auth' => true,
+            'permission' => 'read_files'
+        ],
+        '/files/{id}' => [
+            'controller' => 'FileController',
+            'action' => 'show',
+            'auth' => true,
+            'permission' => 'read_files'
+        ],
+        '/auth/me' => [
+            'controller' => 'AuthController',
+            'action' => 'me',
+            'auth' => true
+        ],
+        '/auth/logout' => [
+            'controller' => 'AuthController',
+            'action' => 'logout',
+            'auth' => true
+        ],
+        '/auth/status' => [
+            'controller' => 'AuthController',
+            'action' => 'status',
+            'auth' => false
+        ],
+        '/auth/refresh' => [
+            'controller' => 'AuthController',
+            'action' => 'refresh',
+            'auth' => true
+        ]
     ],
     'POST' => [
-        '/files' => ['FileController', 'store'],
+        '/files' => [
+            'controller' => 'FileController',
+            'action' => 'store',
+            'auth' => true,
+            'permission' => 'write_files'
+        ],
+        '/auth/login' => [
+            'controller' => 'AuthController',
+            'action' => 'login',
+            'auth' => false
+        ]
     ],
     'PUT' => [
-        '/files/{id}' => ['FileController', 'update'],
+        '/files/{id}' => [
+            'controller' => 'FileController',
+            'action' => 'update',
+            'auth' => true,
+            'permission' => 'write_files'
+        ]
     ],
     'DELETE' => [
-        '/files/{id}' => ['FileController', 'destroy'],
+        '/files/{id}' => [
+            'controller' => 'FileController',
+            'action' => 'destroy',
+            'auth' => true,
+            'permission' => 'delete_files'
+        ]
     ]
 ];

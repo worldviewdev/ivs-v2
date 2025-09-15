@@ -27,7 +27,6 @@ class FileController
         $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
         $orderBy = $columns[$orderColumn] ?? 'file_id';
 
-        // For testing, use agent_id = 1 if session is not available
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
 
         // Get filter parameters
