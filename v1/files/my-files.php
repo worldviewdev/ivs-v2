@@ -5,11 +5,11 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
 $start = isset($_REQUEST['start']) ? intval($_REQUEST['start']) : 0;
 $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
 
-$pagesize = $pagesize == 0 ? DEF_PAGE_SIZE : $pagesize;
-$sql = "select f.*, concat(emp_first_name,' ',emp_last_name) as active_staff_name,concat(client_first_name,' ',client_last_name) as client_name,concat(agent_first_name,' ',agent_last_name) as agent_name  from mv_files f left join mv_employee e on f.file_active_staff=e.emp_id  left join mv_client c on f.fk_client_id=c.client_id left join mv_agent a on f.fk_agent_id=a.agent_id left join mv_agency ag on ag.agency_id=a.fk_agency_id where file_status!='Delete' and file_admin_type = 'Admin' and (file_primary_staff='80' or file_active_staff='80') and is_package_file='No'  order by file_id desc ";
-$pager = new midas_pager_sql($sql, $pagesize, $start, 'bootstrap');
-$sql .= " limit $start, $pagesize ";
-$result = db_query($sql);
+// $pagesize = $pagesize == 0 ? DEF_PAGE_SIZE : $pagesize;
+// $sql = "select f.*, concat(emp_first_name,' ',emp_last_name) as active_staff_name,concat(client_first_name,' ',client_last_name) as client_name,concat(agent_first_name,' ',agent_last_name) as agent_name  from mv_files f left join mv_employee e on f.file_active_staff=e.emp_id  left join mv_client c on f.fk_client_id=c.client_id left join mv_agent a on f.fk_agent_id=a.agent_id left join mv_agency ag on ag.agency_id=a.fk_agency_id where file_status!='Delete' and file_admin_type = 'Admin' and (file_primary_staff='80' or file_active_staff='80') and is_package_file='No'  order by file_id desc ";
+// $pager = new midas_pager_sql($sql, $pagesize, $start, 'bootstrap');
+// $sql .= " limit $start, $pagesize ";
+// $result = db_query($sql);
 ?>
 
 <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -78,8 +78,6 @@ $result = db_query($sql);
                     </tbody>
                 </table>
 
-                <!-- Hapus pager lama karena sudah diganti dengan DataTable pagination -->
-                <!-- <?php $pager->show_pager(); ?> -->
 
             </div>
 
@@ -89,9 +87,46 @@ $result = db_query($sql);
 
 </div>
 
-<!-- Tambahkan script untuk DataTable -->
+<!-- DataTable Script -->
 
-
+<script>
+    $(document).ready(function() {
+    // Initialize DataTable for My Files using reusable component
+    const myFilesTable = createDataTable('files', {
+        ajax: {
+            url: '../api/files'
+        }
+    });
+    
+    // Initialize Flatpickr for date picker
+    const flatpickrElement = document.querySelector('#kt_ecommerce_sales_flatpickr');
+    if (flatpickrElement) {
+        const flatpickr = $(flatpickrElement).flatpickr({
+            altInput: true,
+            altFormat: "d/m/Y",
+            dateFormat: "Y-m-d",
+            mode: "range",
+            onChange: function (selectedDates, dateStr, instance) {
+                // Trigger DataTable refresh when date changes
+                if (myFilesTable) {
+                    myFilesTable.refresh();
+                }
+            },
+        });
+        
+        // Handle clear button
+        const clearButton = document.querySelector('#kt_ecommerce_sales_flatpickr_clear');
+        if (clearButton) {
+            clearButton.addEventListener('click', function() {
+                flatpickr.clear();
+                if (myFilesTable) {
+                    myFilesTable.refresh();
+                }
+            });
+        }
+    }
+});
+</script>
 <?php
 require_once('../footer.inc.php');
 ?>

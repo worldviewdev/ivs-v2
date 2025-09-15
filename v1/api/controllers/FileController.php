@@ -1,0 +1,226 @@
+<?php
+require_once __DIR__ . '/../core/StatusHelper.php';
+
+class FileController
+{
+    public function index()
+    {
+        $draw = (int)($_GET['draw'] ?? 1);
+        $start = (int)($_GET['start'] ?? 0);
+        $length = (int)($_GET['length'] ?? 10);
+        $searchValue = $_GET['search']['value'] ?? '';
+        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
+        $orderBy = $columns[$orderColumn] ?? 'file_id';
+
+        // For testing, use agent_id = 1 if session is not available
+        $agentId = $_SESSION['sess_agent_id'] ?? 1;
+
+        // Get filter parameters
+        $statusFilter = $_GET['status_filter'] ?? '';
+        $dateFilter = $_GET['date_filter'] ?? '';
+        $dateFrom = $_GET['date_from'] ?? '';
+        $dateTo = $_GET['date_to'] ?? '';
+
+        $repo = new FileRepository();
+        $files = $repo->getFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+        $total = $repo->countFiles($searchValue, $agentId, true, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+
+        // Process files to add status info
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            $processedFiles[] = [
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $file['file_arrival_date'],
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $file['file_type_desc'],
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+
+        Response::json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
+            'data' => $processedFiles
+        ]);
+    }
+
+    public function show()
+    {
+        $path = strtok($_SERVER['REQUEST_URI'], '?');
+        $path = str_replace('/v1/api', '', $path);
+        $id = str_replace('/files/', '', $path);
+
+        if (!is_numeric($id)) {
+            Response::json(['error' => 'Invalid file ID'], 400);
+            return;
+        }
+
+        $repo = new FileRepository();
+        $file = $repo->getFileById($id);
+
+        if (!$file) {
+            Response::json(['error' => 'File not found'], 404);
+            return;
+        }
+
+        Response::json(['data' => $file]);
+    }
+
+    public function allFiles()
+    {
+        $draw = (int)($_GET['draw'] ?? 1);
+        $start = (int)($_GET['start'] ?? 0);
+        $length = (int)($_GET['length'] ?? 10);
+        $searchValue = $_GET['search']['value'] ?? '';
+        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+        $agentId = $_SESSION['sess_agent_id'] ?? 1;
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
+        $orderBy = $columns[$orderColumn] ?? 'file_id';
+
+        // Get filter parameters
+        $statusFilter = $_GET['status_filter'] ?? '';
+        $dateFilter = $_GET['date_filter'] ?? '';
+        $dateFrom = $_GET['date_from'] ?? '';
+        $dateTo = $_GET['date_to'] ?? '';
+
+        if(isset($_SESSION['sess_super_admin']) && $_SESSION['sess_super_admin'] == 'SuperAdmin') {
+            $myFiles = false;
+        } else {
+            $myFiles = true;
+        }
+
+        $repo = new FileRepository();
+        $files = $repo->getAllFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $myFiles, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+        $total = $repo->countFiles($searchValue, $agentId, $myFiles, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+
+        // Process files to add status info
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            $processedFiles[] = [
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $file['file_arrival_date'],
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $file['file_type_desc'],
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+
+        Response::json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
+            'data' => $processedFiles
+        ]);
+    }
+
+
+    public function store()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (!$input) {
+            Response::json(['error' => 'Invalid JSON input'], 400);
+            return;
+        }
+
+        // Validasi input yang diperlukan
+        $required = ['file_code', 'fk_client_id', 'fk_agent_id'];
+        foreach ($required as $field) {
+            if (!isset($input[$field]) || empty($input[$field])) {
+                Response::json(['error' => "Field $field is required"], 400);
+                return;
+            }
+        }
+
+        $repo = new FileRepository();
+        $result = $repo->createFile($input);
+
+        if ($result) {
+            Response::json(['message' => 'File created successfully', 'data' => $result], 201);
+        } else {
+            Response::json(['error' => 'Failed to create file'], 500);
+        }
+    }
+
+    public function update()
+    {
+        $path = strtok($_SERVER['REQUEST_URI'], '?');
+        $path = str_replace('/v1/api', '', $path);
+        $id = str_replace('/files/', '', $path);
+
+        if (!is_numeric($id)) {
+            Response::json(['error' => 'Invalid file ID'], 400);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (!$input) {
+            Response::json(['error' => 'Invalid JSON input'], 400);
+            return;
+        }
+
+        $repo = new FileRepository();
+        $result = $repo->updateFile($id, $input);
+
+        if ($result) {
+            Response::json(['message' => 'File updated successfully', 'data' => $result]);
+        } else {
+            Response::json(['error' => 'Failed to update file'], 500);
+        }
+    }
+
+    public function destroy()
+    {
+        $path = strtok($_SERVER['REQUEST_URI'], '?');
+        $path = str_replace('/v1/api', '', $path);
+        $id = str_replace('/files/', '', $path);
+
+        if (!is_numeric($id)) {
+            Response::json(['error' => 'Invalid file ID'], 400);
+            return;
+        }
+
+        $repo = new FileRepository();
+        $result = $repo->deleteFile($id);
+
+        if ($result) {
+            Response::json(['message' => 'File deleted successfully']);
+        } else {
+            Response::json(['error' => 'Failed to delete file'], 500);
+        }
+    }
+}
