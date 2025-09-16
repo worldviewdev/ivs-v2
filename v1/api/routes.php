@@ -39,17 +39,17 @@ return [
             'action' => 'refresh',
             'auth' => true
         ],
-        '/quick-contact/all' => [
-            'controller' => 'QuickContactController',
+        '/trip-planning/all' => [
+            'controller' => 'TripPlanningController',
             'action' => 'all',
             'auth' => true,
-            'permission' => 'read_quick_contact'
+            'permission' => 'read_trip_planning'
         ],
-        '/quick-contact/{id}' => [
-            'controller' => 'QuickContactController',
+        '/trip-planning/{id}' => [
+            'controller' => 'TripPlanningController',
             'action' => 'show',
             'auth' => true,
-            'permission' => 'read_quick_contact'
+            'permission' => 'read_trip_planning'
         ]
     ],
     'POST' => [
@@ -79,6 +79,12 @@ return [
             'action' => 'destroy',
             'auth' => true,
             'permission' => 'delete_files'
+        ],
+        '/trip-planning/{id}' => [
+            'controller' => 'TripPlanningController',
+            'action' => 'destroy',
+            'auth' => true,
+            'permission' => 'delete_trip_planning'
         ]
     ]
 ];

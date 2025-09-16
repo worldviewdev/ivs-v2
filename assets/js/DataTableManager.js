@@ -258,6 +258,21 @@ const DataTableConfigs = {
                 }
             }
         ]
+    },
+
+    // Trip Planning DataTable configuration
+    trip_planning: {
+        columns: [
+            { data: 'id', sClass: 'text-center', orderable: true },
+            { data: 'name', sClass: 'text-left', orderable: true },
+            { data: 'email', sClass: 'text-left', orderable: true },
+            { data: 'phone', sClass: 'text-left', orderable: true },
+            { data: 'dates_for_travel', sClass: 'text-center', orderable: true },
+            { data: 'people_in_group', sClass: 'text-center', orderable: true },
+            { data: 'how_many_week', sClass: 'text-center', orderable: true },
+            { data: 'created_at', sClass: 'text-center', orderable: true },
+            { data: 'id', sClass: 'text-center', orderable: false }
+        ]
     }
 };
 

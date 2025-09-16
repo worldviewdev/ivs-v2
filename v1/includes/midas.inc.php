@@ -10,8 +10,8 @@ ob_start();
 
 // Untuk testing, session di-set hanya 10 detik supaya mudah cek session berjalan atau tidak
 if (session_status() === PHP_SESSION_NONE) {
-    ini_set('session.gc_maxlifetime', 10); // 10 detik
-    ini_set('session.cookie_lifetime', 10); // 10 detik
+    ini_set('session.gc_maxlifetime', 3600); // 10 detik
+    ini_set('session.cookie_lifetime', 3600); // 10 detik
     session_start();
 }
 //ini_set("memory_limit", "128M");

@@ -54,7 +54,7 @@ if (isset($routes[$method][$path])) {
             $pattern = str_replace('{id}', '(\d+)', $route);
             $pattern = '#^' . $pattern . '$#';
             
-            if (preg_match($pattern, $path)) {
+            if (preg_match($pattern, $path, $matches)) {
                 // Cek authentication
                 if (!AuthMiddleware::checkAuth($method, $path, $handler)) {
                     return; // Response sudah dikirim oleh middleware
@@ -70,6 +70,11 @@ if (isset($routes[$method][$path])) {
                         ], 403);
                         return;
                     }
+                }
+                
+                // Extract parameters from URL
+                if (strpos($route, '{id}') !== false) {
+                    $_GET['id'] = $matches[1]; // First captured group is the ID
                 }
                 
                 $controller = $handler['controller'];

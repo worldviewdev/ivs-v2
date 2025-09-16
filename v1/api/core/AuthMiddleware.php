@@ -131,6 +131,10 @@ class AuthMiddleware
                 return in_array($agentRole, ['admin', 'super_admin']);
             case 'view_all_files':
                 return in_array($agentRole, ['admin', 'super_admin']);
+            case 'read_trip_planning':
+                return in_array($agentRole, ['agent', 'admin', 'super_admin']);
+            case 'delete_trip_planning':
+                return in_array($agentRole, ['admin', 'super_admin']);
             default:
                 return false;
         }
