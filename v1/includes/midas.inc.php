@@ -1,10 +1,19 @@
 <?php
-// Session settings must be set before any output
-if (session_status() == PHP_SESSION_NONE) {
-    ini_set('session.gc_maxlifetime', '7200');
+
+ob_start();
+
+// Best practice penggunaan session di PHP adalah:
+// 1. Memastikan session_start() hanya dipanggil jika session belum dimulai.
+// 2. Mengatur session.gc_maxlifetime sebelum session_start() jika ingin mengubah lifetime.
+// 3. Mengatur session.cookie_lifetime sebelum session_start() jika ingin mengubah lifetime cookie.
+// 4. Untuk production, jangan set lifetime terlalu pendek (10 detik hanya untuk testing).
+
+// Untuk testing, session di-set hanya 10 detik supaya mudah cek session berjalan atau tidak
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 10); // 10 detik
+    ini_set('session.cookie_lifetime', 10); // 10 detik
     session_start();
 }
-ob_start();
 //ini_set("memory_limit", "128M");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 date_default_timezone_set('Canada/Pacific');
@@ -23,6 +32,7 @@ $tmp = str_replace('\\', '/', $tmp);
 $tmp = substr($tmp, 0, strrpos($tmp, '/'));
 define('SITE_FS_PATH', $tmp);
 define('PASSWORD_KEY', "2y$10$@12)927^%");
+define('SESSION_TIMEOUT', 3600);
 //For temporary //
 $tmp2 = dirname(dirname(__FILE__));
 $tmp2 = str_replace('\\', '/', $tmp2);

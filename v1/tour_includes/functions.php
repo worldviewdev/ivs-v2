@@ -33,7 +33,9 @@ function protect_agent_page()
 {
     $cur_page = basename($_SERVER['PHP_SELF']);
     if ($cur_page != 'my-secure-login.php' && $cur_page != 'forget.php') {
-        if ($_SESSION['sess_agent_id'] == '') {
+        if ($_SESSION['sess_agent_id'] == '' || (time() - $_SESSION['sess_last_activity'] > SESSION_TIMEOUT)) {
+            // destroy all session
+            session_destroy();
             $_SESSION['sess_agent_redirect_url'] = $_SERVER['REQUEST_URI'];
             header('Location: ' . SITE_WS_PATH . '/' . AGENT_ADMIN_DIR . '/my-secure-login.php');
             exit;

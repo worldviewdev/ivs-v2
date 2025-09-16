@@ -26,7 +26,7 @@ class AuthMiddleware
         if (!self::isAgentLoggedIn()) {
             Response::json([
                 'error' => 'Unauthorized',
-                'message' => 'Session agent tidak ditemukan atau sudah expired',
+                'message' => 'Session agent not found or expired',
                 'code' => 'AUTH_REQUIRED'
             ], 401);
             return false;
@@ -36,7 +36,7 @@ class AuthMiddleware
         if (!self::isSessionValid()) {
             Response::json([
                 'error' => 'Session Expired',
-                'message' => 'Session agent sudah expired, silakan login kembali',
+                'message' => 'Session agent expired, please login again',
                 'code' => 'SESSION_EXPIRED'
             ], 401);
             return false;
@@ -53,17 +53,17 @@ class AuthMiddleware
      */
     private static function requiresAuth($route)
     {
-        // Jika route memiliki property 'auth' => false, maka tidak perlu auth
+        // If route has property 'auth' => false, then no need to auth
         if (isset($route['auth']) && $route['auth'] === false) {
             return false;
         }
 
-        // Default: semua route memerlukan authentication
+        // Default: all routes require authentication
         return true;
     }
 
     /**
-     * Cek apakah agent sudah login
+     * Check if agent is logged in
      * 
      * @return bool
      */
@@ -90,7 +90,7 @@ class AuthMiddleware
     {
         // Cek session timeout (optional)
         if (isset($_SESSION['sess_last_activity'])) {
-            $timeout = 3600; // 1 jam timeout
+            $timeout = 7200; // 2 jam timeout
             if (time() - $_SESSION['sess_last_activity'] > $timeout) {
                 return false;
             }

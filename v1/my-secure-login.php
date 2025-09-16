@@ -34,6 +34,7 @@ if (is_post_back()) {
                 db_query("INSERT INTO mv_login_history SET fk_user_id='$emp_id', ip_address='$id_address', login_date_time=NOW()");
                 $return_page = $_SESSION['sess_agent_redirect_url'];
                 $_SESSION['sess_agent_redirect_url'] = "";
+				$_SESSION['sess_last_activity'] = time();
                 if ($return_page == '') {
                     header("HTTP/1.1 301 Moved Permanently");
                     header("location: " . SITE_WS_PATH . "/" . AGENT_ADMIN_DIR . "/my-secure-index.php");
