@@ -67,19 +67,42 @@ class TripPlanningController
             }
 
             // Get total records count (without filtering)
-            $totalSql = "SELECT COUNT(*) as total FROM ivs_questionnaire_form";
+            $totalSql = "SELECT COUNT(*) as total 
+                        FROM ivs_quick_contact qc
+                        INNER JOIN ivs_questionnaire_form tqf ON qc.email = tqf.email
+                        LEFT JOIN mv_files mf ON qc.fk_file_id = mf.file_id
+                        WHERE qc.added_on = tqf.created_at";
             $totalStmt = $this->db->prepare($totalSql);
             $totalStmt->execute();
             $totalRecords = $totalStmt->fetch()['total'];
 
             // Get filtered records count
-            $filteredSql = "SELECT COUNT(*) as filtered FROM ivs_questionnaire_form" . $whereClause;
+            $filteredSql = "SELECT COUNT(*) as filtered 
+                           FROM ivs_quick_contact qc
+                           INNER JOIN ivs_questionnaire_form tqf ON qc.email = tqf.email
+                           LEFT JOIN mv_files mf ON qc.fk_file_id = mf.file_id
+                           WHERE qc.added_on = tqf.created_at" . 
+                           (strpos($whereClause, 'WHERE') !== false ? str_replace('WHERE', 'AND', $whereClause) : $whereClause);
             $filteredStmt = $this->db->prepare($filteredSql);
             $filteredStmt->execute($params);
             $filteredRecords = $filteredStmt->fetch()['filtered'];
 
             // Build main query
-            $sql = "SELECT * FROM ivs_questionnaire_form" . $whereClause;
+            $sql = "SELECT 
+                        qc.fk_file_id, 
+                        mf.file_code,
+                        tqf.* 
+                    FROM 
+                        ivs_quick_contact qc
+                    INNER JOIN 
+                        ivs_questionnaire_form tqf
+                        ON qc.email = tqf.email
+                    LEFT JOIN 
+                        mv_files mf
+                        ON qc.fk_file_id = mf.file_id
+                    WHERE
+                        qc.added_on = tqf.created_at" . 
+                    (strpos($whereClause, 'WHERE') !== false ? str_replace('WHERE', 'AND', $whereClause) : $whereClause);
             $sql .= " ORDER BY {$orderBy} {$orderDirection}";
             $sql .= " LIMIT {$start}, {$length}";
 
@@ -102,6 +125,9 @@ class TripPlanningController
                     'how_many_week' => $row['how_many_week'],
                     'comments' => $row['comments'],
                     'created_at' => $row['created_at'],
+                    // New fields from JOIN query
+                    'fk_file_id' => $row['fk_file_id'] ?? null,
+                    'file_code' => $row['file_code'] ?? null,
                     // Additional fields for detailed view using actual database field names
                     'flexible_on_date' => $row['flexible_on_date'] ?? null,
                     'adult_age_group' => $row['adult_age_group'] ?? null,

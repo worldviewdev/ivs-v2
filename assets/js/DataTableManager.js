@@ -209,7 +209,13 @@ const DataTableConfigs = {
     // File DataTable configuration
     files: {
         columns: [
-            { data: 'file_code' },
+            { 
+                data: 'file_code',
+                render: function(data, type, row) {
+                    if (!row.id) return data;
+                    return `<a href="files/file_summary_general.php?id=${row.id}" target="_blank">${data}</a>`;
+                }
+            },
             { data: 'file_arrival_date' },
             { data: 'client_name' },
             { data: 'agent_name' },
@@ -278,6 +284,15 @@ const DataTableConfigs = {
     // Quick Contact DataTable configuration
     quick_contact: {
         columns: [
+            { 
+                data: 'file_code',
+                sClass: 'text-left',
+                orderable: true,
+                render: function(data, type, row) {
+                    if (!data || !row.fk_file_id) return data || 'N/A';
+                    return `<a href="files/file_summary_general.php?id=${row.fk_file_id}" target="_blank" class="text-primary text-hover-primary fw-bold">${data}</a>`;
+                }
+            },
             { data: 'name', sClass: 'text-left', orderable: true },
             { data: 'email', sClass: 'text-left', orderable: true },
             { data: 'phone', sClass: 'text-left', orderable: true },

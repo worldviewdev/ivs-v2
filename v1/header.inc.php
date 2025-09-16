@@ -29,15 +29,16 @@ require_once('includes/midas.inc.php');
                         link: siteUrl + '/quick-contact.php',
                         page: 'quick-contact.php'
                     },
-                    {
-                        title: 'Transfer & Tour',
-                        link: siteUrl + '/transfer-tour.php',
-                        page: 'transfer-tour.php'
-                    },
+
                     {
                         title: 'Trip Planning',
                         link: siteUrl + '/trip-planning.php',
                         page: 'trip-planning.php'
+                    },
+                    {
+                        title: 'Transfer & Tour',
+                        link: siteUrl + '/transfer-tour.php',
+                        page: 'transfer-tour.php'
                     }
                 <?php } ?>
             ],

@@ -18,6 +18,7 @@ require_once('header.inc.php');
                 <table id="kt_datatable_vertical_scroll" class="table table-row-bordered gy-5 dataTable gs-7">
                     <thead>
                         <tr class="fw-semibold fs-6 text-gray-800">
+                            <th>File Code</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
@@ -88,6 +89,12 @@ require_once('header.inc.php');
             },
             columns: [
                 {
+                    data: 'file_code',
+                    render: function(data, type, row) {
+                        return `<a href="files/file_summary_general.php?id=${row.fk_file_id}" target="_blank" class="text-primary text-hover-primary fw-bold">${data}</a>`;
+                    }
+                },
+                {
                     data: 'name'
                 },
                 {
@@ -138,7 +145,7 @@ require_once('header.inc.php');
                     orderable: false,
                     render: function(data, type, row) {
                         return `
-                            <a href="#" class="btn btn-sm btn-icon btn-success view-lead-btn me-2" title="Lihat" data-lead-id="${data}" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">
+                            <a href="#" class="btn btn-sm btn-icon btn-primary view-lead-btn me-2" title="Lihat" data-lead-id="${data}" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">
                                 <i class="ki-outline ki-eye fs-5"></i>
                             </a>
                             <a href="#" class="btn btn-sm btn-icon btn-danger delete-lead-btn" title="Hapus" data-lead-id="${data}">

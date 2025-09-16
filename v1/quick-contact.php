@@ -172,7 +172,10 @@ $result = db_query($sql);
             },
             columns: [
                 {
-                    data: 'file_code'
+                    data: 'file_code',
+                    render: function(data, type, row) {
+                        return `<a href="files/file_summary_general.php?id=${row.fk_file_id}" target="_blank" class="text-primary text-hover-primary fw-bold">${data}</a>`;
+                    }
                 },
                 {
                     data: 'name'
