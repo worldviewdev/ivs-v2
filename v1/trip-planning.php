@@ -236,7 +236,7 @@ require_once('header.inc.php');
                                 <div class="card-body p-6">
                                     <div class="d-flex align-items-center">
                                         <div class="symbol symbol-50px me-4">
-                                            <div class="symbol-label bg-white bg-opacity-20">
+                                            <div class="symbol-label bg-primary bg-opacity-20">
                                                 <i class="ki-outline ki-calendar fs-2x text-primary"></i>
                                             </div>
                                         </div>

@@ -273,6 +273,21 @@ const DataTableConfigs = {
             { data: 'created_at', sClass: 'text-center', orderable: true },
             { data: 'id', sClass: 'text-center', orderable: false }
         ]
+    },
+
+    // Quick Contact DataTable configuration
+    quick_contact: {
+        columns: [
+            { data: 'name', sClass: 'text-left', orderable: true },
+            { data: 'email', sClass: 'text-left', orderable: true },
+            { data: 'phone', sClass: 'text-left', orderable: true },
+            { data: 'dates_for_travel', sClass: 'text-center', orderable: true },
+            { data: 'adults', sClass: 'text-center', orderable: true },
+            { data: 'children', sClass: 'text-center', orderable: true },
+            { data: 'message', sClass: 'text-left', orderable: true },
+            { data: 'added_on', sClass: 'text-center', orderable: true },
+            { data: 'id', sClass: 'text-center', orderable: false }
+        ]
     }
 };
 

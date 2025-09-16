@@ -165,4 +165,39 @@ class QuickContactController
             Response::json(['error' => 'Failed to fetch lead: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Delete quick contact lead by ID
+     */
+    public function destroy()
+    {
+        try {
+            $id = isset($_GET['id']) ? $_GET['id'] : '';
+            
+            if (empty($id)) {
+                Response::json(['error' => 'ID is required'], 400);
+                return;
+            }
+            
+            // Check if lead exists
+            $checkSql = "SELECT id FROM ivs_quick_contact WHERE id = ?";
+            $checkStmt = $this->db->prepare($checkSql);
+            $checkStmt->execute([$id]);
+            
+            if (!$checkStmt->fetch()) {
+                Response::json(['error' => 'Lead not found'], 404);
+                return;
+            }
+            
+            // Delete the lead
+            $deleteSql = "DELETE FROM ivs_quick_contact WHERE id = ?";
+            $deleteStmt = $this->db->prepare($deleteSql);
+            $deleteStmt->execute([$id]);
+            
+            Response::json(['message' => 'Lead deleted successfully']);
+            
+        } catch (Exception $e) {
+            Response::json(['error' => 'Failed to delete lead: ' . $e->getMessage()], 500);
+        }
+    }
 }

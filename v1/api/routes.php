@@ -50,6 +50,18 @@ return [
             'action' => 'show',
             'auth' => true,
             'permission' => 'read_trip_planning'
+        ],
+        '/quick-contact/all' => [
+            'controller' => 'QuickContactController',
+            'action' => 'all',
+            'auth' => true,
+            'permission' => 'read_quick_contact'
+        ],
+        '/quick-contact/{id}' => [
+            'controller' => 'QuickContactController',
+            'action' => 'show',
+            'auth' => true,
+            'permission' => 'read_quick_contact'
         ]
     ],
     'POST' => [
@@ -85,6 +97,12 @@ return [
             'action' => 'destroy',
             'auth' => true,
             'permission' => 'delete_trip_planning'
+        ],
+        '/quick-contact/{id}' => [
+            'controller' => 'QuickContactController',
+            'action' => 'destroy',
+            'auth' => true,
+            'permission' => 'delete_quick_contact'
         ]
     ]
 ];
