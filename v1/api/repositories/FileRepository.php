@@ -115,10 +115,54 @@ class FileRepository
         return $stmt->fetchAll();
     }
     
-    public function getCurrentYearFiles($limit = 10, $agentId = 1)
+    public function getCurrentYearFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter = '', $dateFilter = '', $dateFrom = '', $dateTo = '', $isSuperAdmin = false, $fileType = '', $staffId = '')
     {
         $db = Database::conn();
         
+        $sql_add = '';
+
+        // Check if user is not super admin - add agent restriction
+        if (!$isSuperAdmin) {
+            $sql_add .= " AND (f.file_primary_staff = :agentId OR f.file_active_staff = :agentId)";
+        }
+
+        // Handle status filter
+        if ($statusFilter) {
+            if ($statusFilter == "0") {
+                $sql_add .= " AND f.file_current_status != '7' AND f.file_current_status != '8'";
+            } elseif ($statusFilter != "99") {
+                $sql_add .= " AND f.file_current_status = :status_filter";
+            }
+        }
+
+        // Handle file type filter
+        if ($fileType != "") {
+            $sql_add .= " AND f.is_package_file = 'Yes'";
+        } else {
+            $sql_add .= " AND f.is_package_file = 'No'";
+        }
+
+        // Handle search value
+        if ($searchValue) {
+            $sql_add .= " AND (f.file_code LIKE :search OR CONCAT(c.client_first_name,' ',c.client_last_name) LIKE :search OR CONCAT(a.agent_first_name,' ',a.agent_last_name) LIKE :search OR CONCAT(e.emp_first_name,' ',e.emp_last_name) LIKE :search OR f.file_id = :search_id)";
+        }
+        
+        if ($dateFilter) {
+            $sql_add .= " AND DATE(f.file_arrival_date) = :date_filter";
+        }
+        
+        if ($dateFrom && $dateTo) {
+            $sql_add .= " AND DATE(f.file_arrival_date) BETWEEN :date_from AND :date_to";
+        } elseif ($dateFrom) {
+            $sql_add .= " AND DATE(f.file_arrival_date) >= :date_from";
+        } elseif ($dateTo) {
+            $sql_add .= " AND DATE(f.file_arrival_date) <= :date_to";
+        }
+
+        // Handle staff filter
+        if ($staffId && $staffId > 0) {
+            $sql_add .= " AND (f.file_active_staff = :staff_id OR f.file_primary_staff = :staff_id)";
+        }
         
         $sql = "SELECT f.*,
                    CONCAT(e.emp_first_name,' ',e.emp_last_name) AS active_staff_name,
@@ -128,17 +172,38 @@ class FileRepository
                 LEFT JOIN mv_employee e ON f.file_active_staff = e.emp_id
                 LEFT JOIN mv_client c ON f.fk_client_id = c.client_id
                 LEFT JOIN mv_agent a ON f.fk_agent_id = a.agent_id
+                LEFT JOIN mv_agency ag ON ag.agency_id = a.fk_agency_id
                 WHERE f.file_status != 'Delete'
+                  AND f.is_online = 'No'
                   AND f.file_admin_type = 'Admin'
-                  AND (f.file_primary_staff = :agentId OR f.file_active_staff = :agentId)
-                  AND f.is_package_file = 'No'
+                  AND f.file_type != '7'
                   AND YEAR(f.file_arrival_date) = YEAR(CURDATE())
-                  ORDER BY f.file_id DESC
-                  LIMIT :limit";
+                  $sql_add
+                  ORDER BY $orderBy $orderDir
+                  LIMIT :start, :length";
 
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':agentId', $agentId, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        
+        // Bind agent ID only if not super admin
+        if (!$isSuperAdmin) {
+            $stmt->bindValue(':agentId', $agentId, PDO::PARAM_INT);
+        }
+        
+        if ($searchValue) {
+            $stmt->bindValue(':search', "%$searchValue%", PDO::PARAM_STR);
+            $stmt->bindValue(':search_id', $searchValue, PDO::PARAM_STR);
+        }
+        if ($statusFilter && $statusFilter != "0" && $statusFilter != "99") {
+            $stmt->bindValue(':status_filter', $statusFilter, PDO::PARAM_INT);
+        }
+        if ($dateFilter) $stmt->bindValue(':date_filter', $dateFilter, PDO::PARAM_STR);
+        if ($dateFrom) $stmt->bindValue(':date_from', $dateFrom, PDO::PARAM_STR);
+        if ($dateTo) $stmt->bindValue(':date_to', $dateTo, PDO::PARAM_STR);
+        if ($staffId && $staffId > 0) {
+            $stmt->bindValue(':staff_id', $staffId, PDO::PARAM_INT);
+        }
+        $stmt->bindValue(':start', (int)$start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int)$length, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -214,14 +279,30 @@ class FileRepository
         return $stmt->fetchAll();
     }
 
-    public function countFiles($searchValue, $agentId, $myFiles = true, $statusFilter = '', $dateFilter = '', $dateFrom = '', $dateTo = '')
+    public function countFiles($searchValue, $agentId, $myFiles = true, $statusFilter = '', $dateFilter = '', $dateFrom = '', $dateTo = '', $isSuperAdmin = false, $fileType = '', $staffId = '')
     {
         $db = Database::conn();
         $sql_add = '';
 
-        // If myFiles = true, only count files related to the logged-in agent
-        if ($myFiles) {
+        // If myFiles = true and not super admin, only count files related to the logged-in agent
+        if ($myFiles && !$isSuperAdmin) {
             $sql_add = "AND (f.file_primary_staff = :agentId OR f.file_active_staff = :agentId)";
+        }
+
+        // Handle status filter
+        if ($statusFilter) {
+            if ($statusFilter == "0") {
+                $sql_add .= " AND f.file_current_status != '7' AND f.file_current_status != '8'";
+            } elseif ($statusFilter != "99") {
+                $sql_add .= " AND f.file_current_status = :status_filter";
+            }
+        }
+
+        // Handle file type filter
+        if ($fileType != "") {
+            $sql_add .= " AND f.is_package_file = 'Yes'";
+        } else {
+            $sql_add .= " AND f.is_package_file = 'No'";
         }
 
         $sql = "SELECT COUNT(*) as total
@@ -229,23 +310,22 @@ class FileRepository
                 LEFT JOIN mv_client c ON f.fk_client_id = c.client_id
                 LEFT JOIN mv_agent a ON f.fk_agent_id = a.agent_id
                 LEFT JOIN mv_employee e ON f.file_active_staff = e.emp_id
+                LEFT JOIN mv_agency ag ON ag.agency_id = a.fk_agency_id
                 WHERE f.file_status != 'Delete'
+                  AND f.is_online = 'No'
                   AND f.file_admin_type = 'Admin'
-                  $sql_add
-                  AND f.is_package_file = 'No'";
+                  AND f.file_type != '7'
+                  AND YEAR(f.file_arrival_date) = YEAR(CURDATE())
+                  $sql_add";
 
         if ($searchValue) {
             $sql .= " AND (
                 f.file_code LIKE :search OR
                 CONCAT(c.client_first_name,' ',c.client_last_name) LIKE :search OR
                 CONCAT(a.agent_first_name,' ',a.agent_last_name) LIKE :search OR
-                CONCAT(e.emp_first_name,' ',e.emp_last_name) LIKE :search
+                CONCAT(e.emp_first_name,' ',e.emp_last_name) LIKE :search OR
+                f.file_id = :search_id
             )";
-        }
-
-        // Add status filter
-        if ($statusFilter) {
-            $sql .= " AND f.file_current_status = :status_filter";
         }
 
         // Add date filter
@@ -262,16 +342,31 @@ class FileRepository
             $sql .= " AND DATE(f.file_arrival_date) <= :date_to";
         }
 
+        // Handle staff filter
+        if ($staffId && $staffId > 0) {
+            $sql .= " AND (f.file_active_staff = :staff_id OR f.file_primary_staff = :staff_id)";
+        }
+
         $stmt = $db->prepare($sql);
-        // Only bind agentId if myFiles = true
-        if ($myFiles) {
+        
+        // Only bind agentId if myFiles = true and not super admin
+        if ($myFiles && !$isSuperAdmin) {
             $stmt->bindValue(':agentId', $agentId, PDO::PARAM_INT);
         }
-        if ($searchValue) $stmt->bindValue(':search', "%$searchValue%", PDO::PARAM_STR);
-        if ($statusFilter) $stmt->bindValue(':status_filter', $statusFilter, PDO::PARAM_INT);
+        
+        if ($searchValue) {
+            $stmt->bindValue(':search', "%$searchValue%", PDO::PARAM_STR);
+            $stmt->bindValue(':search_id', $searchValue, PDO::PARAM_STR);
+        }
+        if ($statusFilter && $statusFilter != "0" && $statusFilter != "99") {
+            $stmt->bindValue(':status_filter', $statusFilter, PDO::PARAM_INT);
+        }
         if ($dateFilter) $stmt->bindValue(':date_filter', $dateFilter, PDO::PARAM_STR);
         if ($dateFrom) $stmt->bindValue(':date_from', $dateFrom, PDO::PARAM_STR);
         if ($dateTo) $stmt->bindValue(':date_to', $dateTo, PDO::PARAM_STR);
+        if ($staffId && $staffId > 0) {
+            $stmt->bindValue(':staff_id', $staffId, PDO::PARAM_INT);
+        }
         $stmt->execute();
 
         return $stmt->fetch()['total'];

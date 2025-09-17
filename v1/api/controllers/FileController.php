@@ -210,9 +210,26 @@ class FileController
         $limit = (int)($_GET['limit'] ?? 10);
         $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;        
         $draw = (int)($_GET['draw'] ?? 1);
+
+        $start = (int)($_GET['start'] ?? 0);
+        $length = (int)($_GET['length'] ?? 10);
+        $searchValue = $_GET['search']['value'] ?? '';
+        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+        $statusFilter = $_GET['status_filter'] ?? '';
+        $dateFilter = $_GET['date_filter'] ?? '';
+        $dateFrom = $_GET['date_from'] ?? '';
+        $dateTo = $_GET['date_to'] ?? '';
+        $fileType = $_GET['file_type'] ?? '';
+        $staffId = $_GET['staff_id'] ?? '';
+        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
+        
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
+        $orderBy = $columns[$orderColumn] ?? 'file_id';
+
         $repo = new FileRepository();
-        $files = $repo->getCurrentYearFiles($limit, $agentId);
-        $total = $repo->countFiles('', $agentId, true, '', '', '', '');
+        $files = $repo->getCurrentYearFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
+        $total = $repo->countFiles($searchValue, $agentId, true, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
         // Process files to add status info
         $processedFiles = [];
         foreach ($files as $file) {
