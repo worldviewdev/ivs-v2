@@ -227,7 +227,11 @@ const DataTableConfigs = {
                 }
             },
             { data: 'file_type' },
-            { data: 'file_type_desc' }
+            { data: 'file_type_desc',
+                render: function(data, type, row) {
+                    return data ? data.substring(0, 35) + '...' : '';
+                }
+             }
         ]
     },
 

@@ -27,6 +27,11 @@ class FileController
             return;
         }
 
+        if (isset($_GET['action']) && $_GET['action'] === 'get_abandoned_files') {
+            $this->getAbandonedFiles();
+            return;
+        }
+
         $draw = (int)($_GET['draw'] ?? 1);
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
@@ -201,6 +206,67 @@ class FileController
         }
 
         Response::json([
+            'data' => $processedFiles
+        ]);
+    }
+
+    public function getAbandonedFiles()
+    {
+        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+        $draw = (int)($_GET['draw'] ?? 1);
+
+        $start = (int)($_GET['start'] ?? 0);
+        $length = (int)($_GET['length'] ?? 10);
+        $searchValue = $_GET['search']['value'] ?? '';
+        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+        $statusFilter = $_GET['status_filter'] ?? '';
+        $dateFilter = $_GET['date_filter'] ?? '';
+        $dateFrom = $_GET['date_from'] ?? '';
+        $dateTo = $_GET['date_to'] ?? '';
+        $fileType = $_GET['file_type'] ?? '';
+        $staffId = $_GET['staff_id'] ?? '';
+        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
+        
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
+        $orderBy = $columns[$orderColumn] ?? 'file_id';
+
+        $repo = new FileRepository();
+        $files = $repo->getAbandonedFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
+        $total = $repo->countAbandonedFiles($searchValue, $agentId, $isSuperAdmin, $fileType, $staffId, $dateFilter, $dateFrom, $dateTo);
+
+        // Process files to add status info
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            $processedFiles[] = [
+                'file_id' => $file['file_id'],
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $file['file_arrival_date'],
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $file['file_type_desc'] ? mb_substr($file['file_type_desc'], 0, 50) . '...' : '',
+                'notes' => '', // Add empty notes field for consistency
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+
+        Response::json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
             'data' => $processedFiles
         ]);
     }
