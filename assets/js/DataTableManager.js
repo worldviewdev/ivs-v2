@@ -31,7 +31,7 @@ class DataTableManager {
             serverSide: true,
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            order: [[0, 'desc']],
+            order: [[8, 'desc']], // Default sort by file_added_on desc
             language: {
                 processing: "Processing...",
                 lengthMenu: "_MENU_",
@@ -306,7 +306,8 @@ const DataTableConfigs = {
                 render: function(data, type, row) {
                     return data ? data.substring(0, 35) + '...' : '';
                 }
-             }
+             },
+            { data: 'file_added_on', visible: false } // Hidden column for sorting
         ]
     },
 
@@ -335,7 +336,8 @@ const DataTableConfigs = {
                 render: function(data, type, row) {
                     return data ? data.substring(0, 35) + '...' : '';
                 }
-             }
+             },
+            { data: 'file_added_on', visible: false } // Hidden column for sorting
         ]
     }
 };

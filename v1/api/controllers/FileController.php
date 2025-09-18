@@ -44,8 +44,8 @@ class FileController
         $orderColumn = $_GET['order'][0]['column'] ?? 0;
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
 
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
 
@@ -77,6 +77,7 @@ class FileController
                 ],
                 'file_type' => $statusInfo['file_type_text'],
                 'file_type_desc' => $file['file_type_desc'],
+                'file_added_on' => $file['file_added_on'],
                 'row_class' => $statusInfo['class'],
                 'row_bg_color' => $statusInfo['bg_color'],
                 // Include original data for reference
@@ -233,8 +234,8 @@ class FileController
         $staffId = $_GET['staff_id'] ?? '';
         $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
         
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         $repo = new FileRepository();
         $files = $repo->getAbandonedFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
@@ -294,8 +295,8 @@ class FileController
         $staffId = $_GET['staff_id'] ?? '';
         $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
 
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         $repo = new FileRepository();
         $files = $repo->getArchivedFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
@@ -321,6 +322,7 @@ class FileController
                 ],
                 'file_type' => $statusInfo['file_type_text'],
                 'file_type_desc' => $file['file_type_desc'],
+                'file_added_on' => $file['file_added_on'],
                 'notes' => '', // Add empty notes field for consistency
                 'row_class' => $statusInfo['class'],
                 'row_bg_color' => $statusInfo['bg_color'],
@@ -357,8 +359,8 @@ class FileController
         $staffId = $_GET['staff_id'] ?? '';
         $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
         
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         $repo = new FileRepository();
         $files = $repo->getCurrentYearFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
@@ -430,8 +432,8 @@ class FileController
         $orderColumn = $_GET['order'][0]['column'] ?? 0;
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         // Get filter parameters
         $statusFilter = $_GET['status_filter'] ?? '';
