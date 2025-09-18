@@ -106,15 +106,31 @@ $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
             },
             dataSrc: 'data' // Specify that data is in 'data' property
         },
-        pageLength: 10,
-        lengthMenu: [[10], [10]],
-        paging: false,
-        searching: false,
-        info: false,
-        lengthChange: false,
-        dom: 'rt',
-        processing: false,
-        serverSide: false
+        columns: [
+            { 
+                data: 'file_code',
+                render: function(data, type, row) {
+                    if (!row.id) return data;
+                    return `<a href="files/file_summary_general.php?id=${row.id}" target="_blank">${data}</a>`;
+                }
+            },
+            { data: 'file_arrival_date' },
+            { data: 'client_name' },
+            { data: 'agent_name' },
+            { data: 'active_staff_name' },
+            { 
+                data: 'status',
+                render: function(data, type, row) {
+                    return '<span class="status-indicator"></span><span class="status-badge">' + data.text + '</span>';
+                }
+            },
+            { data: 'file_type' },
+            { data: 'file_type_desc',
+                render: function(data, type, row) {
+                    return data ? data.substring(0, 35) + '...' : '';
+                }
+             }
+        ]
     });
     
     // Initialize Flatpickr for date picker
