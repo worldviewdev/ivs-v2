@@ -82,6 +82,7 @@ class UserRepository
             foreach ($clients as $client) {
                 $formattedData[] = [
                     'client_added_date' => $client['client_added_date'] ?? '',
+                    'client_id' => $client['client_id'] ?? '',
                     'title' => $client['client_salutation'] ?? '',
                     'name' => $client['client_first_name'] ?? '',
                     'surname' => $client['client_last_name'] ?? '',
@@ -91,7 +92,8 @@ class UserRepository
                     'status' => [
                         'text' => $client['client_status'] ?? 'Active',
                         'class' => 'success'
-                    ]
+                    ],
+                    'actions' => '' // Empty, will be rendered by DataTable
                 ];
             }
             

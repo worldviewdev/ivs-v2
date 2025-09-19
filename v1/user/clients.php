@@ -47,6 +47,22 @@ require_once('../header.inc.php');
             }
         });
     });
+
+    // Edit Client function
+    function editClient(clientId) {
+        // TODO: Implement edit functionality
+        console.log('Edit client:', clientId);
+        alert('Edit client functionality will be implemented');
+    }
+
+    // Delete Client function
+    function deleteClient(clientId) {
+        if (confirm('Are you sure you want to delete this client?')) {
+            // TODO: Implement delete functionality
+            console.log('Delete client:', clientId);
+            alert('Delete client functionality will be implemented');
+        }
+    }
 </script>
 <?php
 require_once('../footer.inc.php');

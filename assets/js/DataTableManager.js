@@ -355,10 +355,10 @@ const DataTableConfigs = {
             { data: 'surname', sClass: 'text-left', orderable: true, title: 'Last Name' },
             { data: 'email', sClass: 'text-left', orderable: true, title: 'Email' },
             { data: 'phone', sClass: 'text-left', orderable: true, title: 'Phone' },
-            { data: 'code', sClass: 'text-center', orderable: true, title: 'Code' },
+            { data: 'code', sClass: 'text-left', orderable: true, title: 'Code' },
             { 
                 data: 'status',
-                sClass: 'text-center',
+                sClass: 'text-left',
                 orderable: true,
                 title: 'Status',
                 render: function(data, type, row) {
@@ -366,6 +366,24 @@ const DataTableConfigs = {
                         return '<span class="badge badge-' + (data.class || 'success') + '">' + data.text + '</span>';
                     }
                     return '<span class="badge badge-success">Active</span>';
+                }
+            },
+            {
+                data: 'actions',
+                sClass: 'text-left',
+                orderable: false,
+                title: 'Actions',
+                render: function(data, type, row) {
+                    return `
+                        <div class="d-flex justify-content-left gap-2">
+                            <button class="btn btn-sm btn-light-primary btn-icon" onclick="editClient(${row.client_id})" title="Edit Client">
+                                <i class="ki-outline ki-pencil fs-5"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light-danger btn-icon" onclick="deleteClient(${row.client_id})" title="Delete Client">
+                                <i class="ki-outline ki-trash fs-5"></i>
+                            </button>
+                        </div>
+                    `;
                 }
             }
         ]
