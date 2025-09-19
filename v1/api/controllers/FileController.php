@@ -46,7 +46,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
 
         $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
@@ -229,7 +229,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $statusFilter = $_GET['status_filter'] ?? '';
         $dateFilter = $_GET['date_filter'] ?? '';
@@ -290,7 +290,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $statusFilter = $_GET['status_filter'] ?? '';
         $dateFilter = $_GET['date_filter'] ?? '';
@@ -299,7 +299,7 @@ class FileController
         $fileType = $_GET['file_type'] ?? '';
         $staffId = $_GET['staff_id'] ?? '';
         $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
-
+        
         $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
         $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
@@ -354,7 +354,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $statusFilter = $_GET['status_filter'] ?? '';
         $dateFilter = $_GET['date_filter'] ?? '';
@@ -414,7 +414,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $statusFilter = $_GET['status_filter'] ?? '';
         $dateFilter = $_GET['date_filter'] ?? '';
@@ -428,7 +428,7 @@ class FileController
         $toDate = $_GET['to_date'] ?? '';
 
         $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_id';
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
         $repo = new FileRepository();
         $files = $repo->getPaidInFullFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId, $displayBy, $fromDate, $toDate);
@@ -500,7 +500,7 @@ class FileController
         $start = (int)($_GET['start'] ?? 0);
         $length = (int)($_GET['length'] ?? 10);
         $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 0;
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
         $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
         $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
