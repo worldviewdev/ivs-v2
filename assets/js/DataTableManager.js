@@ -31,7 +31,7 @@ class DataTableManager {
             serverSide: true,
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            order: [[0, 'desc']], // Default sort by client_added_date desc
+            order: [[8, 'desc']], // Default sort by file_added_on desc
             language: {
                 processing: "Processing...",
                 lengthMenu: "_MENU_",
@@ -348,6 +348,7 @@ const DataTableConfigs = {
 
     // Clients DataTable configuration
     clients: {
+        order: [[0, 'desc']], // Default sort by client_added_date desc
         columns: [
             { data: 'client_added_date', visible: false }, // Hidden column for sorting
             { data: 'title', sClass: 'text-left', orderable: true, title: 'Salutation' },
@@ -396,8 +397,23 @@ const DataTableConfigs = {
 function createDataTable(type, customConfig = {}) {
     const baseConfig = DataTableConfigs[type] || {};
     
-    // Simple merge untuk sementara
-    const config = { ...baseConfig, ...customConfig };
+    // Deep merge untuk menggabungkan konfigurasi dengan benar
+    const config = deepMerge(baseConfig, customConfig);
     
     return new DataTableManager(config);
+}
+
+// Helper function untuk deep merge
+function deepMerge(target, source) {
+    const result = { ...target };
+    
+    for (const key in source) {
+        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+            result[key] = deepMerge(target[key] || {}, source[key]);
+        } else {
+            result[key] = source[key];
+        }
+    }
+    
+    return result;
 }
