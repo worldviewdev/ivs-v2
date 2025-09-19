@@ -3,6 +3,153 @@ require_once __DIR__ . '/../core/StatusHelper.php';
 
 class FileController
 {
+    /**
+     * Process files data to add status information
+     */
+    private function processFilesData($files, $useDepartureDate = false)
+    {
+        $processedFiles = [];
+        foreach ($files as $file) {
+            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
+            
+            // Handle special case for sales paid files that use departure_date
+            $arrivalDate = $useDepartureDate ? 
+                ($file['file_departure_date'] ?? $file['file_arrival_date'] ?? '') : 
+                ($file['file_arrival_date'] ?? '');
+            
+            // Handle file_type_desc truncation for abandoned files
+            $fileTypeDesc = $file['file_type_desc'] ?? '';
+            if (isset($file['is_abandoned']) && $file['is_abandoned'] && $fileTypeDesc) {
+                $fileTypeDesc = mb_substr($fileTypeDesc, 0, 50) . '...';
+            }
+            
+            $processedFiles[] = [
+                'file_id' => $file['file_id'],
+                'id' => $file['file_id'], // Add id field for compatibility
+                'file_code' => $file['file_code'],
+                'file_arrival_date' => $arrivalDate,
+                'client_name' => $file['client_name'],
+                'agent_name' => $file['agent_name'],
+                'active_staff_name' => $file['active_staff_name'],
+                'status' => [
+                    'text' => $statusInfo['text'],
+                    'class' => $statusInfo['class'],
+                    'bg_color' => $statusInfo['bg_color']
+                ],
+                'file_type' => $statusInfo['file_type_text'],
+                'file_type_desc' => $fileTypeDesc,
+                'file_added_on' => $file['file_added_on'] ?? '',
+                'notes' => '', // Add empty notes field for consistency
+                'row_class' => $statusInfo['class'],
+                'row_bg_color' => $statusInfo['bg_color'],
+                // Include original data for reference
+                'file_current_status' => $file['file_current_status'],
+                'file_type_id' => $file['file_type']
+            ];
+        }
+        
+        return $processedFiles;
+    }
+
+    /**
+     * Get common pagination parameters from request
+     */
+    private function getPaginationParams()
+    {
+        return [
+            'draw' => (int)($_GET['draw'] ?? 1),
+            'start' => (int)($_GET['start'] ?? 0),
+            'length' => (int)($_GET['length'] ?? 10),
+            'limit' => (int)($_GET['limit'] ?? 10)
+        ];
+    }
+
+    /**
+     * Get common search and ordering parameters from request
+     */
+    private function getSearchAndOrderParams()
+    {
+        $searchValue = $_GET['search']['value'] ?? '';
+        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
+        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+        
+        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
+        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
+        
+        return [
+            'searchValue' => $searchValue,
+            'orderBy' => $orderBy,
+            'orderDir' => $orderDir
+        ];
+    }
+
+    /**
+     * Get common filter parameters from request
+     */
+    private function getFilterParams()
+    {
+        return [
+            'statusFilter' => $_GET['status_filter'] ?? '',
+            'dateFilter' => $_GET['date_filter'] ?? '',
+            'dateFrom' => $_GET['date_from'] ?? '',
+            'dateTo' => $_GET['date_to'] ?? '',
+            'fileType' => $_GET['file_type'] ?? '',
+            'staffId' => $_GET['staff_id'] ?? '',
+            'isSuperAdmin' => ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin'
+        ];
+    }
+
+    /**
+     * Get agent ID from session or request
+     */
+    private function getAgentId()
+    {
+        return $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+    }
+
+    /**
+     * Send JSON response with common structure
+     */
+    private function sendJsonResponse($data, $total = null, $draw = 1)
+    {
+        $response = [
+            'draw' => $draw,
+            'data' => $data
+        ];
+        
+        if ($total !== null) {
+            $response['recordsTotal'] = $total;
+            $response['recordsFiltered'] = $total;
+        }
+        
+        Response::json($response);
+    }
+
+    /**
+     * Get file ID from URL path
+     */
+    private function getFileIdFromPath()
+    {
+        $path = strtok($_SERVER['REQUEST_URI'], '?');
+        $path = str_replace('/v1/api', '', $path);
+        return str_replace('/files/', '', $path);
+    }
+
+    /**
+     * Validate file ID
+     */
+    private function validateFileId($id)
+    {
+        if (!is_numeric($id)) {
+            Response::json(['error' => 'Invalid file ID'], 400);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get all files
+     */
     public function index()
     {
         // Check if this is a request for latest files
@@ -42,456 +189,251 @@ class FileController
             return;
         }
 
-        $draw = (int)($_GET['draw'] ?? 1);
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
-
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
-
+        // Get common parameters
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
 
-        // Get filter parameters
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-
         $repo = new FileRepository();
-        $files = $repo->getFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo);
-        $total = $repo->countFiles($searchValue, $agentId, true, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+        $files = $repo->getFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
+        $total = $repo->countFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            true, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'file_added_on' => $file['file_added_on'],
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getLatestFiles()
     {
-        $draw = (int)($_GET['draw'] ?? 1);
-        $limit = (int)($_GET['limit'] ?? 7);
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+        $pagination = $this->getPaginationParams();
+        $agentId = $this->getAgentId();
 
         $repo = new FileRepository();
-        $files = $repo->getLatestFiles($agentId, $limit);
+        $files = $repo->getLatestFiles($agentId, $pagination['limit']);
         $total = count($files); // For latest files, total is the same as returned files
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'id' => $file['file_id'], // Add id field for compatibility
-                'file_id' => $file['file_id'],
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'notes' => '', // Add empty notes field
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getSalesPaid()
     {
-        $draw = (int)($_GET['draw'] ?? 1);
-        $limit = (int)($_GET['limit'] ?? 7);
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
+        $pagination = $this->getPaginationParams();
+        $agentId = $this->getAgentId();
 
         $repo = new FileRepository();
-        $files = $repo->getSalesPaid($agentId, $limit);
+        $files = $repo->getSalesPaid($agentId, $pagination['limit']);
         $total = count($files); // For sales paid files, total is the same as returned files
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'id' => $file['file_id'], // Add id field for compatibility
-                'file_id' => $file['file_id'],
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_departure_date'], // Use departure_date as arrival_date for consistency
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files, true); // Use departure date for sales paid
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getMotivationFiles()
     {
-        $limit = (int)($_GET['limit'] ?? 10);
+        $pagination = $this->getPaginationParams();
         
         $repo = new FileRepository();
-        $files = $repo->getMotivationFiles($limit);
+        $files = $repo->getMotivationFiles($pagination['limit']);
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_id' => $file['file_id'],
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles);
     }
 
     public function getAbandonedFiles()
     {
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
-        $draw = (int)($_GET['draw'] ?? 1);
-
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-        $fileType = $_GET['file_type'] ?? '';
-        $staffId = $_GET['staff_id'] ?? '';
-        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
-        
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
+        $agentId = $this->getAgentId();
 
         $repo = new FileRepository();
-        $files = $repo->getAbandonedFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
-        $total = $repo->countAbandonedFiles($searchValue, $agentId, $isSuperAdmin, $fileType, $staffId, $dateFilter, $dateFrom, $dateTo);
+        $files = $repo->getAbandonedFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId']
+        );
+        $total = $repo->countAbandonedFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_id' => $file['file_id'],
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'] ? mb_substr($file['file_type_desc'], 0, 50) . '...' : '',
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
+        // Mark files as abandoned for special processing
+        foreach ($files as &$file) {
+            $file['is_abandoned'] = true;
         }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getArchivedFiles()
     {
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
-        $draw = (int)($_GET['draw'] ?? 1);
-        
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-        $fileType = $_GET['file_type'] ?? '';
-        $staffId = $_GET['staff_id'] ?? '';
-        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
-        
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
+        $agentId = $this->getAgentId();
 
         $repo = new FileRepository();
-        $files = $repo->getArchivedFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
-        $total = $repo->countArchivedFiles($searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
+        $files = $repo->getArchivedFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId']
+        );
+        $total = $repo->countArchivedFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId']
+        );
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_id' => $file['file_id'],
-                'id' => $file['file_id'], // Add id field for compatibility
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'file_added_on' => $file['file_added_on'],
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getCurrentYearFiles()
     {
-        $limit = (int)($_GET['limit'] ?? 10);
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;        
-        $draw = (int)($_GET['draw'] ?? 1);
-
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-        $fileType = $_GET['file_type'] ?? '';
-        $staffId = $_GET['staff_id'] ?? '';
-        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
-        
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
+        $agentId = $this->getAgentId();
 
         $repo = new FileRepository();
-        $files = $repo->getCurrentYearFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
-        $total = $repo->countCurrentYearFiles($searchValue, $agentId, $isSuperAdmin, $fileType, $staffId, $statusFilter, $dateFilter, $dateFrom, $dateTo);
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_id' => $file['file_id'],
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
+        $files = $repo->getCurrentYearFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId']
+        );
+        $total = $repo->countCurrentYearFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId'], 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
 
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function getPaidInFullFiles()
     {
-        $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
-        $draw = (int)($_GET['draw'] ?? 1);
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
+        $agentId = $this->getAgentId();
         
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-        $fileType = $_GET['file_type'] ?? '';
-        $staffId = $_GET['staff_id'] ?? '';
-        $isSuperAdmin = ($_SESSION['sess_super_admin'] ?? '') == 'SuperAdmin';
+        // Additional parameters specific to this method
         $displayBy = $_GET['displayBy'] ?? 0;
         $fromDate = $_GET['from_date'] ?? '';
         $toDate = $_GET['to_date'] ?? '';
 
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
-
         $repo = new FileRepository();
-        $files = $repo->getPaidInFullFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId, $displayBy, $fromDate, $toDate);
-        $total = $repo->countPaidInFullFiles($searchValue, $agentId, $isSuperAdmin, $fileType, $staffId, $dateFilter, $dateFrom, $dateTo, $displayBy, $fromDate, $toDate);
+        $files = $repo->getPaidInFullFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId'], 
+            $displayBy, 
+            $fromDate, 
+            $toDate
+        );
+        $total = $repo->countPaidInFullFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $filters['isSuperAdmin'], 
+            $filters['fileType'], 
+            $filters['staffId'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo'], 
+            $displayBy, 
+            $fromDate, 
+            $toDate
+        );
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'file_id' => $file['file_id'],
-                'id' => $file['file_id'], // Add id field for compatibility
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'file_added_on' => $file['file_added_on'],
-                'notes' => '', // Add empty notes field for consistency
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
     public function show()
     {
-        $path = strtok($_SERVER['REQUEST_URI'], '?');
-        $path = str_replace('/v1/api', '', $path);
-        $id = str_replace('/files/', '', $path);
+        $id = $this->getFileIdFromPath();
 
-        if (!is_numeric($id)) {
-            Response::json(['error' => 'Invalid file ID'], 400);
+        if (!$this->validateFileId($id)) {
             return;
         }
 
@@ -508,65 +450,40 @@ class FileController
 
     public function allFiles()
     {
-        $draw = (int)($_GET['draw'] ?? 1);
-        $start = (int)($_GET['start'] ?? 0);
-        $length = (int)($_GET['length'] ?? 10);
-        $searchValue = $_GET['search']['value'] ?? '';
-        $orderColumn = $_GET['order'][0]['column'] ?? 8;  // Default to file_added_on column
-        $orderDir = $_GET['order'][0]['dir'] ?? 'desc';
+        $pagination = $this->getPaginationParams();
+        $searchOrder = $this->getSearchAndOrderParams();
+        $filters = $this->getFilterParams();
         $agentId = $_SESSION['sess_agent_id'] ?? 1;
-        $columns = ['file_code', 'file_arrival_date', 'client_name', 'agent_name', 'active_staff_name', 'file_current_status', 'file_type', 'file_type_desc', 'file_added_on'];
-        $orderBy = $columns[$orderColumn] ?? 'file_added_on';
 
-        // Get filter parameters
-        $statusFilter = $_GET['status_filter'] ?? '';
-        $dateFilter = $_GET['date_filter'] ?? '';
-        $dateFrom = $_GET['date_from'] ?? '';
-        $dateTo = $_GET['date_to'] ?? '';
-
-        if(isset($_SESSION['sess_super_admin']) && $_SESSION['sess_super_admin'] == 'SuperAdmin') {
-            $myFiles = false;
-        } else {
-            $myFiles = true;
-        }
+        // Determine if user can see all files or only their own
+        $myFiles = !(isset($_SESSION['sess_super_admin']) && $_SESSION['sess_super_admin'] == 'SuperAdmin');
 
         $repo = new FileRepository();
-        $files = $repo->getAllFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $myFiles, $statusFilter, $dateFilter, $dateFrom, $dateTo);
-        $total = $repo->countFiles($searchValue, $agentId, $myFiles, $statusFilter, $dateFilter, $dateFrom, $dateTo);
+        $files = $repo->getAllFiles(
+            $pagination['start'], 
+            $pagination['length'], 
+            $searchOrder['orderBy'], 
+            $searchOrder['orderDir'], 
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $myFiles, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
+        $total = $repo->countFiles(
+            $searchOrder['searchValue'], 
+            $agentId, 
+            $myFiles, 
+            $filters['statusFilter'], 
+            $filters['dateFilter'], 
+            $filters['dateFrom'], 
+            $filters['dateTo']
+        );
 
-        // Process files to add status info
-        $processedFiles = [];
-        foreach ($files as $file) {
-            $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
-            
-            $processedFiles[] = [
-                'id' => $file['file_id'], // Add id field for compatibility
-                'file_code' => $file['file_code'],
-                'file_arrival_date' => $file['file_arrival_date'],
-                'client_name' => $file['client_name'],
-                'agent_name' => $file['agent_name'],
-                'active_staff_name' => $file['active_staff_name'],
-                'status' => [
-                    'text' => $statusInfo['text'],
-                    'class' => $statusInfo['class'],
-                    'bg_color' => $statusInfo['bg_color']
-                ],
-                'file_type' => $statusInfo['file_type_text'],
-                'file_type_desc' => $file['file_type_desc'],
-                'row_class' => $statusInfo['class'],
-                'row_bg_color' => $statusInfo['bg_color'],
-                // Include original data for reference
-                'file_current_status' => $file['file_current_status'],
-                'file_type_id' => $file['file_type']
-            ];
-        }
-
-        Response::json([
-            'draw' => $draw,
-            'recordsTotal' => $total,
-            'recordsFiltered' => $total,
-            'data' => $processedFiles
-        ]);
+        $processedFiles = $this->processFilesData($files);
+        $this->sendJsonResponse($processedFiles, $total, $pagination['draw']);
     }
 
 
@@ -600,12 +517,9 @@ class FileController
 
     public function update()
     {
-        $path = strtok($_SERVER['REQUEST_URI'], '?');
-        $path = str_replace('/v1/api', '', $path);
-        $id = str_replace('/files/', '', $path);
+        $id = $this->getFileIdFromPath();
 
-        if (!is_numeric($id)) {
-            Response::json(['error' => 'Invalid file ID'], 400);
+        if (!$this->validateFileId($id)) {
             return;
         }
 
@@ -628,12 +542,9 @@ class FileController
 
     public function destroy()
     {
-        $path = strtok($_SERVER['REQUEST_URI'], '?');
-        $path = str_replace('/v1/api', '', $path);
-        $id = str_replace('/files/', '', $path);
+        $id = $this->getFileIdFromPath();
 
-        if (!is_numeric($id)) {
-            Response::json(['error' => 'Invalid file ID'], 400);
+        if (!$this->validateFileId($id)) {
             return;
         }
 

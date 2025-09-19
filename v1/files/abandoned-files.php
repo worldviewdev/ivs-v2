@@ -106,6 +106,11 @@ $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
             },
             dataSrc: 'data' // Specify that data is in 'data' property
         },
+        rowStyling: {
+            enabled: true,
+            classField: 'row_class',
+            bgColorField: 'row_bg_color'
+        },
         columns: [
             { 
                 data: 'file_code',
@@ -144,7 +149,7 @@ $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
             onChange: function (selectedDates, dateStr, instance) {
                 // Trigger DataTable refresh when date changes
                 if (abandonedFilesTable) {
-                    allFilesTable.refresh();
+                    abandonedFilesTable.refresh();
                 }
             },
         });
@@ -155,7 +160,7 @@ $pagesize = isset($_REQUEST['pagesize']) ? intval($_REQUEST['pagesize']) : 0;
             clearButton.addEventListener('click', function() {
                 flatpickr.clear();
                 if (abandonedFilesTable) {
-                    allFilesTable.refresh();
+                    abandonedFilesTable.refresh();
                 }
             });
         }

@@ -127,14 +127,18 @@ class DataTableManager {
         };
 
         // Add row styling if enabled
-        if (this.config.rowStyling.enabled) {
+        if (this.config.rowStyling && this.config.rowStyling.enabled) {
             tableConfig.createdRow = (row, data, dataIndex) => {
                 if (data[this.config.rowStyling.classField]) {
                     $(row).addClass(data[this.config.rowStyling.classField]);
                 }
                 if (data[this.config.rowStyling.bgColorField]) {
-                    $(row).css('background-color', data[this.config.rowStyling.bgColorField] + ' !important');
-                    $(row).find('td').css('background-color', data[this.config.rowStyling.bgColorField] + ' !important');
+                    // Apply background color using style attribute for better specificity
+                    const bgColor = data[this.config.rowStyling.bgColorField];
+                    $(row).attr('style', 'background-color: ' + bgColor + ' !important;');
+                    $(row).find('td').each(function() {
+                        $(this).attr('style', 'background-color: ' + bgColor + ' !important;');
+                    });
                 }
             };
         }
@@ -181,6 +185,7 @@ class DataTableManager {
     getTable() {
         return this.table;
     }
+
 
     /**
      * Refresh table data
@@ -347,6 +352,8 @@ const DataTableConfigs = {
  */
 function createDataTable(type, customConfig = {}) {
     const baseConfig = DataTableConfigs[type] || {};
+    
+    // Simple merge untuk sementara
     const config = { ...baseConfig, ...customConfig };
     
     return new DataTableManager(config);
