@@ -19,26 +19,6 @@ return [
             'auth' => true,
             'permission' => 'read_files'
         ],
-        '/auth/me' => [
-            'controller' => 'AuthController',
-            'action' => 'me',
-            'auth' => true
-        ],
-        '/auth/logout' => [
-            'controller' => 'AuthController',
-            'action' => 'logout',
-            'auth' => true
-        ],
-        '/auth/status' => [
-            'controller' => 'AuthController',
-            'action' => 'status',
-            'auth' => false
-        ],
-        '/auth/refresh' => [
-            'controller' => 'AuthController',
-            'action' => 'refresh',
-            'auth' => true
-        ],
         '/trip-planning/all' => [
             'controller' => 'TripPlanningController',
             'action' => 'all',
@@ -62,6 +42,12 @@ return [
             'action' => 'show',
             'auth' => true,
             'permission' => 'read_quick_contact'
+        ],
+        '/users/list' => [
+            'controller' => 'UserController',
+            'action' => 'index',
+            'auth' => true,
+            'permission' => 'read_users'
         ]
     ],
     'POST' => [
@@ -71,10 +57,11 @@ return [
             'auth' => true,
             'permission' => 'write_files'
         ],
-        '/auth/login' => [
-            'controller' => 'AuthController',
-            'action' => 'login',
-            'auth' => false
+        '/users' => [
+            'controller' => 'UserController',
+            'action' => 'store',
+            'auth' => true,
+            'permission' => 'write_users'
         ]
     ],
     'PUT' => [

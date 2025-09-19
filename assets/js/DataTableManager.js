@@ -31,7 +31,7 @@ class DataTableManager {
             serverSide: true,
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            order: [[8, 'desc']], // Default sort by file_added_on desc
+            order: [[0, 'desc']], // Default sort by client_added_date desc
             language: {
                 processing: "Processing...",
                 lengthMenu: "_MENU_",
@@ -127,14 +127,18 @@ class DataTableManager {
         };
 
         // Add row styling if enabled
-        if (this.config.rowStyling.enabled) {
+        if (this.config.rowStyling && this.config.rowStyling.enabled) {
             tableConfig.createdRow = (row, data, dataIndex) => {
                 if (data[this.config.rowStyling.classField]) {
                     $(row).addClass(data[this.config.rowStyling.classField]);
                 }
                 if (data[this.config.rowStyling.bgColorField]) {
-                    $(row).css('background-color', data[this.config.rowStyling.bgColorField] + ' !important');
-                    $(row).find('td').css('background-color', data[this.config.rowStyling.bgColorField] + ' !important');
+                    // Apply background color using style attribute for better specificity
+                    const bgColor = data[this.config.rowStyling.bgColorField];
+                    $(row).attr('style', 'background-color: ' + bgColor + ' !important;');
+                    $(row).find('td').each(function() {
+                        $(this).attr('style', 'background-color: ' + bgColor + ' !important;');
+                    });
                 }
             };
         }
@@ -181,6 +185,7 @@ class DataTableManager {
     getTable() {
         return this.table;
     }
+
 
     /**
      * Refresh table data
@@ -339,6 +344,49 @@ const DataTableConfigs = {
              },
             { data: 'file_added_on', visible: false } // Hidden column for sorting
         ]
+    },
+
+    // Clients DataTable configuration
+    clients: {
+        columns: [
+            { data: 'client_added_date', visible: false }, // Hidden column for sorting
+            { data: 'title', sClass: 'text-left', orderable: true, title: 'Salutation' },
+            { data: 'name', sClass: 'text-left', orderable: true, title: 'First Name' },
+            { data: 'surname', sClass: 'text-left', orderable: true, title: 'Last Name' },
+            { data: 'email', sClass: 'text-left', orderable: true, title: 'Email' },
+            { data: 'phone', sClass: 'text-left', orderable: true, title: 'Phone' },
+            { data: 'code', sClass: 'text-left', orderable: true, title: 'Code' },
+            { 
+                data: 'status',
+                sClass: 'text-left',
+                orderable: true,
+                title: 'Status',
+                render: function(data, type, row) {
+                    if (data && data.text) {
+                        return '<span class="badge badge-' + (data.class || 'success') + '">' + data.text + '</span>';
+                    }
+                    return '<span class="badge badge-success">Active</span>';
+                }
+            },
+            {
+                data: 'actions',
+                sClass: 'text-left',
+                orderable: false,
+                title: 'Actions',
+                render: function(data, type, row) {
+                    return `
+                        <div class="d-flex justify-content-left gap-2">
+                            <button class="btn btn-sm btn-light-primary btn-icon" onclick="editClient(${row.client_id})" title="Edit Client">
+                                <i class="ki-outline ki-pencil fs-5"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light-danger btn-icon" onclick="deleteClient(${row.client_id})" title="Delete Client">
+                                <i class="ki-outline ki-trash fs-5"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
     }
 };
 
@@ -347,6 +395,8 @@ const DataTableConfigs = {
  */
 function createDataTable(type, customConfig = {}) {
     const baseConfig = DataTableConfigs[type] || {};
+    
+    // Simple merge untuk sementara
     const config = { ...baseConfig, ...customConfig };
     
     return new DataTableManager(config);

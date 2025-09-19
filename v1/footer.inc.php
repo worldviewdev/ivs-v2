@@ -1,3 +1,19 @@
+<?php
+$mem = memory_get_usage(true);
+$peak = memory_get_peak_usage(true);
+$time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+$load = sys_getloadavg();
+$phpv = PHP_VERSION;
+$server = $_SERVER['SERVER_SOFTWARE'];
+
+function fmt($bytes)
+{
+    $units = ['B', 'KB', 'MB', 'GB'];
+    $pow = $bytes > 0 ? floor(log($bytes, 1024)) : 0;
+    return round($bytes / (1 << (10 * $pow)), 2) . ' ' . $units[$pow];
+}
+?>
+
 </div>
 
 
@@ -10,65 +26,21 @@
             <a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
         </div>
 
-
+        <?php if(LOCAL_MODE): ?>
         <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
             <li class="menu-item">
-                <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
-            </li>
-            <li class="menu-item">
-                <a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
-            </li>
-            <li class="menu-item">
-                <a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
+                <a href="https://keenthemes.com" target="_blank" class="menu-link px-2"> ⚡ Time: <?= number_format($time, 3) ?>s |
+                    💾 Memory: <?= fmt($mem) ?> (Peak: <?= fmt($peak) ?>) |
+                    🐘 PHP: <?= $phpv ?> |
+                    🌐 Server: <?= $server ?></a>
             </li>
         </ul>
-
+        <?php endif; ?>
     </div>
 
 </div>
 
 </div>
-
-<div class="modal fade" id="kt_modal_new_target" tabindex="-1" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered mw-650px">
-
-        <div class="modal-content rounded">
-
-            <div class="modal-header pb-0 border-0 justify-content-end">
-
-                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                    <i class="ki-outline ki-cross fs-1"></i>
-                </div>
-
-            </div>
-
-
-            <div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
-
-                <div class="mb-13 text-center">
-                    <h1 class="mb-3">Lead Details</h1>
-                    <div class="text-muted fw-semibold fs-5">Complete information about the selected lead</div>
-                </div>
-
-                <div id="lead-details-content">
-                    <!-- Lead details will be loaded here via JavaScript -->
-                    <div class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-3">Loading lead details...</p>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
 </div>
 </div>
 

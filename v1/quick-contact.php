@@ -174,7 +174,7 @@ $result = db_query($sql);
                     data: 'file_code',
                     render: function(data, type, row) {
                         if (row.fk_file_id == null) {
-                            return `<a href="<?php echo SITE_URL; ?>/quick-contact.php?act=cf&id=${row.id}" class="btn btn-primary btn-sm">
+                            return `<a href="<?php echo SITE_URL; ?>/quick-contact.php?act=cf&id=${row.id}" class="btn btn-sm btn-primary btn-icon">
                             <i class="ki-outline ki-plus fs-5"></i>
                             </a>`;
                         } else {
@@ -236,10 +236,10 @@ $result = db_query($sql);
                     orderable: false,
                     render: function(data, type, row) {
                         return `
-                            <a href="#" class="btn btn-sm btn-icon btn-primary view-lead-btn me-2" title="Lihat" data-lead-id="${data}" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">
+                            <a href="#" class="btn btn-sm btn-light-primary btn-icon view-lead-btn me-2" title="Lihat" data-lead-id="${data}" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">
                                 <i class="ki-outline ki-eye fs-5"></i>
                             </a>
-                            <a href="#" class="btn btn-sm btn-icon btn-danger delete-lead-btn" title="Hapus" data-lead-id="${data}">
+                            <a href="#" class="btn btn-sm btn-icon btn-light-danger delete-lead-btn" title="Hapus" data-lead-id="${data}">
                                 <i class="ki-outline ki-trash fs-5"></i>
                             </a>
                         `;
