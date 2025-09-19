@@ -827,16 +827,84 @@ class FileRepository
                 LEFT JOIN mv_employee e ON f.file_active_staff = e.emp_id
                 LEFT JOIN mv_agency ag ON ag.agency_id = a.fk_agency_id
                 WHERE f.file_status != 'Delete'
-                  AND f.is_online = 'No'
                   AND f.file_admin_type = 'Admin'
-                  AND f.file_type != '7'
-                  AND YEAR(f.file_arrival_date) = YEAR(CURDATE())";
+                  AND f.is_package_file = 'No'";
 
         // If myFiles = true and not super admin, only count files related to the logged-in agent
         if ($myFiles && !$isSuperAdmin) {
             $sql .= " AND (f.file_primary_staff = :agentId OR f.file_active_staff = :agentId)";
         }
 
+        $sql .= $this->buildStatusFilter($statusFilter);
+
+        $sql .= $this->buildSearchCondition($searchValue);
+        $sql .= $this->buildDateFilters($dateFilter, $dateFrom, $dateTo);
+        $sql .= $this->buildStaffFilter($staffId);
+
+        $stmt = $db->prepare($sql);
+        
+        // Only bind agentId if myFiles = true and not super admin
+        if ($myFiles && !$isSuperAdmin) {
+            $stmt->bindValue(':agentId', $agentId, PDO::PARAM_INT);
+        }
+        
+        if ($searchValue) {
+            $stmt->bindValue(':search', "%$searchValue%", PDO::PARAM_STR);
+        }
+        
+        if ($statusFilter && $statusFilter != "0" && $statusFilter != "99") {
+            $stmt->bindValue(':status_filter', $statusFilter, PDO::PARAM_INT);
+        }
+        
+        if ($dateFilter) {
+            $stmt->bindValue(':date_filter', $dateFilter, PDO::PARAM_STR);
+        }
+        if ($dateFrom) {
+            $stmt->bindValue(':date_from', $dateFrom, PDO::PARAM_STR);
+        }
+        if ($dateTo) {
+            $stmt->bindValue(':date_to', $dateTo, PDO::PARAM_STR);
+        }
+        if ($staffId && $staffId > 0) {
+            $stmt->bindValue(':staff_id', $staffId, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+
+        return $stmt->fetch()['total'];
+    }
+
+    /**
+     * Count current year files with filtering
+     * 
+     * @param string $searchValue
+     * @param int $agentId
+     * @param bool $isSuperAdmin
+     * @param string $fileType
+     * @param string $staffId
+     * @param string $statusFilter
+     * @param string $dateFilter
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @return int
+     */
+    public function countCurrentYearFiles($searchValue, $agentId, $isSuperAdmin = false, $fileType = '', $staffId = '', $statusFilter = '', $dateFilter = '', $dateFrom = '', $dateTo = '')
+    {
+        $db = Database::conn();
+
+        $sql = "SELECT COUNT(*) as total
+                FROM mv_files f
+                LEFT JOIN mv_client c ON f.fk_client_id = c.client_id
+                LEFT JOIN mv_agent a ON f.fk_agent_id = a.agent_id
+                LEFT JOIN mv_employee e ON f.file_active_staff = e.emp_id
+                LEFT JOIN mv_agency ag ON ag.agency_id = a.fk_agency_id
+                WHERE f.file_status != 'Delete'
+                  AND f.is_online = 'No'
+                  AND f.file_admin_type = 'Admin'
+                  AND f.file_type != '7'
+                  AND YEAR(f.file_arrival_date) = YEAR(CURDATE())";
+
+        $sql .= $this->buildAgentRestriction($isSuperAdmin);
         $sql .= $this->buildStatusFilter($statusFilter);
 
         // Handle file type filter
@@ -852,8 +920,7 @@ class FileRepository
 
         $stmt = $db->prepare($sql);
         
-        // Only bind agentId if myFiles = true and not super admin
-        if ($myFiles && !$isSuperAdmin) {
+        if (!$isSuperAdmin) {
             $stmt->bindValue(':agentId', $agentId, PDO::PARAM_INT);
         }
         
