@@ -31,7 +31,7 @@ class DataTableManager {
             serverSide: true,
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            order: [[8, 'desc']], // Default sort by file_added_on desc
+            order: [[0, 'desc']], // Default sort by client_added_date desc
             language: {
                 processing: "Processing...",
                 lengthMenu: "_MENU_",
@@ -343,6 +343,31 @@ const DataTableConfigs = {
                 }
              },
             { data: 'file_added_on', visible: false } // Hidden column for sorting
+        ]
+    },
+
+    // Clients DataTable configuration
+    clients: {
+        columns: [
+            { data: 'client_added_date', visible: false }, // Hidden column for sorting
+            { data: 'title', sClass: 'text-left', orderable: true, title: 'Salutation' },
+            { data: 'name', sClass: 'text-left', orderable: true, title: 'First Name' },
+            { data: 'surname', sClass: 'text-left', orderable: true, title: 'Last Name' },
+            { data: 'email', sClass: 'text-left', orderable: true, title: 'Email' },
+            { data: 'phone', sClass: 'text-left', orderable: true, title: 'Phone' },
+            { data: 'code', sClass: 'text-center', orderable: true, title: 'Code' },
+            { 
+                data: 'status',
+                sClass: 'text-center',
+                orderable: true,
+                title: 'Status',
+                render: function(data, type, row) {
+                    if (data && data.text) {
+                        return '<span class="badge badge-' + (data.class || 'success') + '">' + data.text + '</span>';
+                    }
+                    return '<span class="badge badge-success">Active</span>';
+                }
+            }
         ]
     }
 };
