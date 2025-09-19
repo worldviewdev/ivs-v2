@@ -15,6 +15,7 @@ require_once('includes/midas.inc.php');
     <link href="<?php echo SITE_WS_PATH; ?>/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
     <script src="<?php echo SITE_WS_PATH; ?>/assets/plugins/global/plugins.bundle.js"></script>
     <script src="<?php echo SITE_WS_PATH; ?>/assets/js/DataTableManager.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const currentPage = window.location.pathname.split('/').pop() || 'my-secure-index.php';
         const siteUrl = '<?php echo SITE_URL; ?>';
@@ -67,11 +68,11 @@ require_once('includes/midas.inc.php');
                     link: siteUrl + '/files/abandoned-files.php',
                     page: 'abandoned-files.php'
                 },
-                {
-                    title: 'Recently Modified',
-                    link: siteUrl + '/files/recently-modified-files.php',
-                    page: 'recently-modified-files.php'
-                },
+                // {
+                //     title: 'Recently Modified',
+                //     link: siteUrl + '/files/recently-modified-files.php',
+                //     page: 'recently-modified-files.php'
+                // },
                 {
                     title: 'Archived Files',
                     link: siteUrl + '/files/archived-files.php',
@@ -85,22 +86,22 @@ require_once('includes/midas.inc.php');
             ],
             'users': [{
                     title: 'Clients',
-                    link: siteUrl + '/users/clients.php',
+                    link: siteUrl + '/user/clients.php',
                     page: 'clients.php'
                 },
                 {
                     title: 'Agents',
-                    link: siteUrl + '/users/agents.php',
+                    link: siteUrl + '/user/agents.php',
                     page: 'agents.php'
                 },
                 {
                     title: 'Agencies',
-                    link: siteUrl + '/users/agencies.php',
+                    link: siteUrl + '/user/agencies.php',
                     page: 'agencies.php'
                 },
                 {
                     title: 'Consortiums',
-                    link: siteUrl + '/users/users.php',
+                    link: siteUrl + '/user/users.php',
                     page: 'users.php'
                 }
             ],
@@ -190,8 +191,12 @@ require_once('includes/midas.inc.php');
         }
         function updatePageHeading() {
             const pageHeading = document.querySelector('.page-heading');
+            const pageBreadcrumb = document.querySelector('.breadcrumb-item-text');
             if (pageHeading) {
                 pageHeading.textContent = getPageTitle();
+            }
+            if (pageBreadcrumb) {
+                pageBreadcrumb.textContent = getPageTitle();
             }
         }
         function updateSecondaryMenu(menuKey) {
@@ -427,7 +432,7 @@ require_once('includes/midas.inc.php');
                                             <li class="breadcrumb-item">
                                                 <span class="bullet bg-gray-500 w-5px h-2px"></span>
                                             </li>
-                                            <li class="breadcrumb-item text-gray-600">Quick Contact</li>
+                                            <li class="breadcrumb-item breadcrumb-item-text text-gray-600">Loading...</li>
                                         </ul>
                                     </div>
                                     <div class="d-flex align-items-center gap-2 gap-lg-3">

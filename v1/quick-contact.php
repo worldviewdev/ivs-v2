@@ -142,14 +142,14 @@ $result = db_query($sql);
                     <i class="ki-outline ki-cross fs-2"></i>
                 </button>
             </div>
-            
+
             <!-- Body -->
             <div class="modal-body p-0">
                 <div id="lead-details-content">
                     <!-- Content will be loaded here -->
                 </div>
             </div>
-            
+
             <!-- Footer -->
             <div class="modal-footer bg-light border-0">
                 <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">
@@ -170,11 +170,16 @@ $result = db_query($sql);
             ajax: {
                 url: '<?php echo SITE_WS_PATH; ?>/api/quick-contact/all'
             },
-            columns: [
-                {
+            columns: [{
                     data: 'file_code',
                     render: function(data, type, row) {
-                        return `<a href="files/file_summary_general.php?id=${row.fk_file_id}" target="_blank" class="text-primary text-hover-primary fw-bold">${data}</a>`;
+                        if (row.fk_file_id == null) {
+                            return `<a href="<?php echo SITE_URL; ?>/quick-contact.php?act=cf&id=${row.id}" class="btn btn-primary btn-sm">
+                            <i class="ki-outline ki-plus fs-5"></i>
+                            </a>`;
+                        } else {
+                            return `<a href="files/file_summary_general.php?id=${row.fk_file_id}" class="text-primary text-hover-primary fw-bold">${data}</a>`;
+                        }
                     }
                 },
                 {
@@ -283,15 +288,15 @@ $result = db_query($sql);
                         return;
                     }
                     // Format travel date
-                    const travelDate = response.dates_for_travel ? 
+                    const travelDate = response.dates_for_travel ?
                         new Date(response.dates_for_travel).toLocaleDateString('en-US', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric'
                         }) : 'N/A';
-                    
+
                     // Format created date
-                    const createdDate = response.added_on ? 
+                    const createdDate = response.added_on ?
                         new Date(response.added_on).toLocaleString('en-US', {
                             day: 'numeric',
                             month: 'short',
@@ -299,7 +304,7 @@ $result = db_query($sql);
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : 'N/A';
-                    
+
                     // Populate modal with clean, modern design for Quick Contact
                     const modalContent = `
                         <div class="p-8">
@@ -479,27 +484,96 @@ $result = db_query($sql);
         $(document).on('click', '.delete-lead-btn', function(e) {
             e.preventDefault();
             const leadId = $(this).data('lead-id');
-            if (confirm('Are you sure you want to delete this quick contact entry?')) {
-                $.ajax({
-                    url: '<?php echo SITE_WS_PATH; ?>/api/quick-contact/' + leadId,
-                    type: 'DELETE',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.error) {
-                            alert('Error: ' + response.error);
-                            return;
+            const $row = $(this).closest('tr');
+            
+            Swal.fire({
+                title: "Konfirmasi Hapus",
+                text: "Apakah Anda yakin ingin menghapus data quick contact ini?",
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-danger",
+                    cancelButton: "btn fw-bold btn-active-light-primary"
+                }
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: "Menghapus...",
+                        text: "Sedang menghapus data, mohon tunggu...",
+                        icon: "info",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            de
                         }
-                        alert('Quick contact entry deleted successfully');
-                        // Refresh the table
-                        if (quickContactTable) {
-                            quickContactTable.refresh();
+                    });
+                    
+                    // Perform delete via AJAX to API
+                    $.ajax({
+                        url: '<?php echo SITE_WS_PATH; ?>/api/quick-contact/' + leadId,
+                        type: 'DELETE',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.error) {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "Error: " + response.error,
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "OK",
+                                    customClass: {
+                                        confirmButton: "btn fw-bold btn-primary"
+                                    }
+                                });
+                                return;
+                            }
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Data quick contact berhasil dihapus.",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "OK",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary"
+                                }
+                            }).then(function() {
+                                // Refresh the table
+                                if (quickContactTable) {
+                                    quickContactTable.refresh();
+                                }
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: "Error!",
+                                text: "Terjadi kesalahan saat menghapus data.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "OK",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary"
+                                }
+                            });
                         }
-                    },
-                    error: function() {
-                        alert('Error deleting quick contact entry');
-                    }
-                });
-            }
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        title: "Dibatalkan",
+                        text: "Data tidak dihapus.",
+                        icon: "info",
+                        buttonsStyling: false,
+                        confirmButtonText: "OK",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary"
+                        }
+                    });
+                }
+            });
         });
     });
 </script>
