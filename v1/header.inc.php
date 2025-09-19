@@ -15,7 +15,6 @@ require_once('includes/midas.inc.php');
     <link href="<?php echo SITE_WS_PATH; ?>/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
     <script src="<?php echo SITE_WS_PATH; ?>/assets/plugins/global/plugins.bundle.js"></script>
     <script src="<?php echo SITE_WS_PATH; ?>/assets/js/DataTableManager.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const currentPage = window.location.pathname.split('/').pop() || 'my-secure-index.php';
         const siteUrl = '<?php echo SITE_URL; ?>';
