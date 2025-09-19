@@ -101,11 +101,13 @@ class FileController
 
     public function getLatestFiles()
     {
+        $draw = (int)($_GET['draw'] ?? 1);
         $limit = (int)($_GET['limit'] ?? 7);
         $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
 
         $repo = new FileRepository();
         $files = $repo->getLatestFiles($agentId, $limit);
+        $total = count($files); // For latest files, total is the same as returned files
 
         // Process files to add status info
         $processedFiles = [];
@@ -113,6 +115,7 @@ class FileController
             $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
             
             $processedFiles[] = [
+                'id' => $file['file_id'], // Add id field for compatibility
                 'file_id' => $file['file_id'],
                 'file_code' => $file['file_code'],
                 'file_arrival_date' => $file['file_arrival_date'],
@@ -136,17 +139,22 @@ class FileController
         }
 
         Response::json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
             'data' => $processedFiles
         ]);
     }
 
     public function getSalesPaid()
     {
+        $draw = (int)($_GET['draw'] ?? 1);
         $limit = (int)($_GET['limit'] ?? 7);
         $agentId = $_GET['agent_id'] ?? $_SESSION['sess_agent_id'] ?? 1;
 
         $repo = new FileRepository();
         $files = $repo->getSalesPaid($agentId, $limit);
+        $total = count($files); // For sales paid files, total is the same as returned files
 
         // Process files to add status info
         $processedFiles = [];
@@ -154,6 +162,7 @@ class FileController
             $statusInfo = StatusHelper::getStatusInfo($file['file_current_status'], $file['file_type']);
             
             $processedFiles[] = [
+                'id' => $file['file_id'], // Add id field for compatibility
                 'file_id' => $file['file_id'],
                 'file_code' => $file['file_code'],
                 'file_arrival_date' => $file['file_departure_date'], // Use departure_date as arrival_date for consistency
@@ -177,6 +186,9 @@ class FileController
         }
 
         Response::json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
             'data' => $processedFiles
         ]);
     }
@@ -369,7 +381,7 @@ class FileController
 
         $repo = new FileRepository();
         $files = $repo->getCurrentYearFiles($start, $length, $orderBy, $orderDir, $searchValue, $agentId, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
-        $total = $repo->countFiles($searchValue, $agentId, true, $statusFilter, $dateFilter, $dateFrom, $dateTo, $isSuperAdmin, $fileType, $staffId);
+        $total = $repo->countCurrentYearFiles($searchValue, $agentId, $isSuperAdmin, $fileType, $staffId, $statusFilter, $dateFilter, $dateFrom, $dateTo);
         // Process files to add status info
         $processedFiles = [];
         foreach ($files as $file) {
